@@ -1,43 +1,28 @@
-const db = require('../config/db');
+const AlertModel = require('../models/AlertModel');
 
-exports.createAlert = async (req, res) => {
+exports.triggerAlert = async (req, res) => {
   try {
-    const { code_type, floor, ward, room, initiator_id } = req.body;
+    const alertId = await AlertModel.create(req.body);
     
-    const [result] = await db.execute(
-      'INSERT INTO Alerts (code_type, floor, ward, room, initiator_id) VALUES (?, ?, ?, ?, ?)',
-      [code_type, floor, ward, room, initiator_id]
-    );
+    // Broadcast via Socket.io (handled in app.js or socket service)
+    const io = req.app.get('socketio');
+    if (io) {
+      io.emit('new_alert', { id: alertId, ...req.body, created_at: new Date() });
+    }
 
-    res.status(201).json({ message: 'Alert created successfully', alertId: result.insertId });
+    res.status(201).json({ success: true, alertId });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to create alert' });
+    res.status(500).json({ success: false, message: 'Server Error' });
   }
 };
 
-exports.getActiveAlerts = async (req, res) => {
+exports.getRecentAlerts = async (req, res) => {
   try {
-    const [rows] = await db.execute(
-      'SELECT * FROM Alerts WHERE status != "RESOLVED" ORDER BY created_at DESC'
-    );
-    res.status(200).json(rows);
+    const alerts = await AlertModel.getRecent();
+    res.json(alerts);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Failed to fetch alerts' });
-  }
-};
-
-exports.updateAlertStatus = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { status } = req.body;
-
-    await db.execute('UPDATE Alerts SET status = ? WHERE id = ?', [status, id]);
-    
-    res.status(200).json({ message: 'Alert status updated' });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Failed to update alert' });
+    res.status(500).json({ success: false, message: 'Server Error' });
   }
 };

@@ -1,85 +1,20 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import AdminDashboard from './pages/admin/dashboard';
-import Users from './pages/admin/users';
-import Analytics from './pages/admin/analytics';
-import SystemDashboard from './pages/system/system_dashboard';
-import './App.css'; // Assume basic reset
-
-// Create a NavLink component to handle active state styling
-const SidebarLink = ({ to, icon, label }) => {
-  const location = useLocation();
-  const isActive = location.pathname === to;
-  
-  return (
-    <Link to={to} style={{
-      ...linkStyle,
-      backgroundColor: isActive ? 'rgba(255,255,255,0.1)' : 'transparent',
-      color: isActive ? '#fff' : '#9ca3af',
-      fontWeight: isActive ? '600' : '500',
-      borderLeft: isActive ? '4px solid #ef4444' : '4px solid transparent',
-    }}>
-      <span style={{ marginRight: '12px', fontSize: '1.25rem' }}>{icon}</span>
-      {label}
-    </Link>
-  );
-};
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AlertProvider } from './context/AlertContext';
+import NurseDashboard from './pages/NurseDashboard';
+import './App.css';
 
 function App() {
   return (
-    <Router>
-      <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f3f4f6', fontFamily: 'Inter, system-ui, sans-serif' }}>
-        {/* Sidebar */}
-        <aside style={{ width: '280px', backgroundColor: '#0f172a', color: 'white', display: 'flex', flexDirection: 'column' }}>
-          <div style={{ padding: '2rem 1.5rem', borderBottom: '1px solid #1e293b' }}>
-            <h2 style={{ fontSize: '1.5rem', fontWeight: '800', margin: 0, display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span style={{ backgroundColor: '#ef4444', padding: '8px', borderRadius: '8px', display: 'flex' }}>
-                🏥
-              </span>
-              MedAlert
-            </h2>
-          </div>
-          
-          <nav style={{ display: 'flex', flexDirection: 'column', padding: '1.5rem 0', gap: '0.25rem' }}>
-            <SidebarLink to="/" icon="🚨" label="Active Alerts" />
-            <SidebarLink to="/users" icon="👥" label="Manage Users" />
-            <SidebarLink to="/analytics" icon="📈" label="Analytics" />
-            <SidebarLink to="/system" icon="⚙️" label="System Monitor" />
-          </nav>
-          
-          <div style={{ marginTop: 'auto', padding: '2rem 1.5rem', borderTop: '1px solid #1e293b' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
-                A
-              </div>
-              <div>
-                <div style={{ fontWeight: '600', fontSize: '0.9rem' }}>Admin User</div>
-                <div style={{ color: '#9ca3af', fontSize: '0.8rem' }}>System Administrator</div>
-              </div>
-            </div>
-          </div>
-        </aside>
-
-        {/* Main Content */}
-        <main style={{ flex: 1, height: '100vh', overflowY: 'auto' }}>
-          <Routes>
-            <Route path="/" element={<AdminDashboard />} />
-            <Route path="/users" element={<Users />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/system" element={<SystemDashboard />} />
-          </Routes>
-        </main>
-      </div>
-    </Router>
+    <AlertProvider>
+      <Router>
+        <Routes>
+          <Route path="/nurse" element={<NurseDashboard />} />
+          <Route path="/" element={<NurseDashboard />} />
+        </Routes>
+      </Router>
+    </AlertProvider>
   );
 }
-
-const linkStyle = {
-  textDecoration: 'none',
-  padding: '1rem 1.5rem',
-  display: 'flex',
-  alignItems: 'center',
-  transition: 'all 0.2s ease',
-};
 
 export default App;
