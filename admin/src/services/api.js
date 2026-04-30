@@ -152,5 +152,109 @@ export const adminService = {
       console.error(`Error deleting department ${id}:`, error);
       throw error;
     }
+  },
+
+  // Ward Management
+  getWards: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/wards`);
+      if (!response.ok) throw new Error('Network response was not ok');
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching wards:", error);
+      throw error;
+    }
+  },
+
+  addWard: async (data) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/wards`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      return await response.json();
+    } catch (error) {
+      console.error("Error adding ward:", error);
+      throw error;
+    }
+  },
+
+  updateWard: async (id, data) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/wards/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      return await response.json();
+    } catch (error) {
+      console.error(`Error updating ward ${id}:`, error);
+      throw error;
+    }
+  },
+
+  deleteWard: async (id) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/wards/${id}`, {
+        method: 'DELETE',
+      });
+      return await response.json();
+    } catch (error) {
+      console.error(`Error deleting ward ${id}:`, error);
+      throw error;
+    }
+  },
+
+  // Alert Code Management
+  getAlertCodes: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/codes`);
+      if (!response.ok) throw new Error('Network response was not ok');
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching alert codes:", error);
+      throw error;
+    }
+  },
+
+  addAlertCode: async (data) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/codes`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      return await response.json();
+    } catch (error) {
+      console.error("Error adding alert code:", error);
+      throw error;
+    }
+  },
+
+  updateAlertCode: async (id, data) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/codes/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      return await response.json();
+    } catch (error) {
+      console.error(`Error updating alert code ${id}:`, error);
+      throw error;
+    }
+  },
+
+  deleteAlertCode: async (id) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/codes/${id}`, {
+        method: 'DELETE',
+      });
+      return await response.json();
+    } catch (error) {
+      console.error(`Error deleting alert code ${id}:`, error);
+      throw error;
+    }
   }
 };

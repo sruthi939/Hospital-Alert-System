@@ -95,6 +95,58 @@ async function seed() {
     );
   }
 
+  // 4. Reset Wards Table
+  await connection.execute('DROP TABLE IF EXISTS Wards');
+  await connection.execute(`
+    CREATE TABLE Wards (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      department VARCHAR(255),
+      room_count INT DEFAULT 0,
+      bed_count INT DEFAULT 0,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  const wards = []; // CLEAN SLATE
+
+  for (const ward of wards) {
+    await connection.execute(
+      'INSERT INTO Wards (name, department, room_count, bed_count) VALUES (?, ?, ?, ?)',
+      ward
+    );
+  }
+
+  // 5. Reset AlertCodes Table
+  await connection.execute('DROP TABLE IF EXISTS AlertCodes');
+  await connection.execute(`
+    CREATE TABLE AlertCodes (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      code VARCHAR(50) NOT NULL UNIQUE,
+      color VARCHAR(50) NOT NULL,
+      description TEXT,
+      status VARCHAR(20) DEFAULT 'Active',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  const codes = [
+    ['Code Blue', 'CODE BLUE', '#3b82f6', 'Cardiac Arrest', 'Active'],
+    ['Code Red', 'CODE RED', '#ef4444', 'Fire', 'Active'],
+    ['Code Yellow', 'CODE YELLOW', '#f59e0b', 'Disaster', 'Active'],
+    ['Code Pink', 'CODE PINK', '#ec4899', 'Infant Abduction', 'Active'],
+    ['Code Grey', 'CODE GREY', '#94a3b8', 'Security Threat', 'Active'],
+    ['Code Orange', 'CODE ORANGE', '#f97316', 'Hazardous Material', 'Active']
+  ];
+
+  for (const code of codes) {
+    await connection.execute(
+      'INSERT INTO AlertCodes (name, code, color, description, status) VALUES (?, ?, ?, ?, ?)',
+      code
+    );
+  }
+
   await connection.execute('SET FOREIGN_KEY_CHECKS = 1');
   console.log('✅ FAIR RESET COMPLETE. Database is clean. Only Admin "Sruthi Alex" exists.');
   await connection.end();

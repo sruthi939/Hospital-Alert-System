@@ -18,6 +18,8 @@ import {
 import Dashboard from './pages/dashboard';
 import UsersPage from './pages/users';
 import DepartmentsPage from './pages/departments';
+import WardsPage from './pages/wards';
+import AlertCodesPage from './pages/codes';
 import Login from './pages/login';
 
 const SidebarLink = ({ to, icon: Icon, label }) => {
@@ -184,6 +186,8 @@ function App() {
               <Route path="/" element={<Dashboard />} />
               <Route path="/users" element={<UsersPage />} />
               <Route path="/departments" element={<DepartmentsPage />} />
+              <Route path="/wards" element={<WardsPage />} />
+              <Route path="/codes" element={<AlertCodesPage />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </div>
