@@ -1,28 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Bell, 
-  Clock, 
-  CheckCircle2, 
-  AlertCircle, 
-  UserPlus, 
-  PlusSquare, 
-  Settings, 
-  FileText,
-  Search,
-  ChevronRight,
-  TrendingUp,
-  MapPin,
-  RefreshCw
-} from 'lucide-react';
+import { Bell, Clock, CheckCircle2, AlertCircle, UserPlus, PlusSquare, Settings, FileText, Search, ChevronRight, TrendingUp, MapPin, RefreshCw } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Label } from 'recharts';
 import { initiateSocketConnection, subscribeToAlerts, disconnectSocket, joinAdminRoom } from '../services/socket';
 import { adminService } from '../services/api';
 
 const StatCard = ({ title, value, subtitle, color }) => (
-  <div style={{ 
-    backgroundColor: 'white', 
-    padding: '1.5rem', 
-    borderRadius: '16px', 
+  <div style={{
+    backgroundColor: 'white',
+    padding: '1.5rem',
+    borderRadius: '16px',
     flex: 1,
     boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
     border: '1px solid #f1f5f9'
@@ -35,32 +21,32 @@ const StatCard = ({ title, value, subtitle, color }) => (
 
 const ActiveAlertItem = ({ alert }) => {
   const { code, location, time, status } = alert;
-  
+
   const colors = {
     'CODE RED': { bg: '#fff1f2', text: '#e11d48', border: '#fecdd3', icon: <AlertCircle size={18} /> },
     'CODE BLUE': { bg: '#eff6ff', text: '#2563eb', border: '#dbeafe', icon: <Bell size={18} /> },
     'CODE YELLOW': { bg: '#fffbeb', text: '#d97706', border: '#fef3c7', icon: <AlertCircle size={18} /> },
     'CODE PINK': { bg: '#fdf2f8', text: '#db2777', border: '#fbcfe8', icon: <Heart size={18} /> }
   };
-  
+
   const style = colors[code.toUpperCase()] || colors['CODE BLUE'];
 
   return (
-    <div style={{ 
-      display: 'flex', 
-      alignItems: 'center', 
-      padding: '1rem', 
-      backgroundColor: style.bg, 
+    <div style={{
+      display: 'flex',
+      alignItems: 'center',
+      padding: '1rem',
+      backgroundColor: style.bg,
       borderRadius: '12px',
       border: `1px solid ${style.border}`,
       marginBottom: '0.75rem',
       justifyContent: 'space-between'
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-        <div style={{ 
-          backgroundColor: 'white', 
-          padding: '8px', 
-          borderRadius: '50%', 
+        <div style={{
+          backgroundColor: 'white',
+          padding: '8px',
+          borderRadius: '50%',
           color: style.text,
           display: 'flex'
         }}>
@@ -77,23 +63,23 @@ const ActiveAlertItem = ({ alert }) => {
 };
 
 const QuickAction = ({ icon: Icon, label, onClick }) => (
-  <button style={{ 
-    display: 'flex', 
-    alignItems: 'center', 
-    gap: '12px', 
-    width: '100%', 
-    padding: '0.875rem 1rem', 
-    backgroundColor: 'white', 
-    border: '1px solid #f1f5f9', 
+  <button style={{
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    width: '100%',
+    padding: '0.875rem 1rem',
+    backgroundColor: 'white',
+    border: '1px solid #f1f5f9',
     borderRadius: '12px',
     cursor: 'pointer',
     marginBottom: '0.5rem',
     transition: 'all 0.2s',
     textAlign: 'left'
   }}
-  onClick={onClick}
-  onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f8fafc'}
-  onMouseLeave={e => e.currentTarget.style.backgroundColor = 'white'}
+    onClick={onClick}
+    onMouseEnter={e => e.currentTarget.style.backgroundColor = '#f8fafc'}
+    onMouseLeave={e => e.currentTarget.style.backgroundColor = 'white'}
   >
     <div style={{ color: '#6366f1' }}><Icon size={18} /></div>
     <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#475569' }}>{label}</span>
@@ -101,15 +87,15 @@ const QuickAction = ({ icon: Icon, label, onClick }) => (
 );
 
 const Heart = ({ size, fill, color, style }) => (
-  <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
-    fill={fill || "none"} 
-    stroke={color || "currentColor"} 
-    strokeWidth="2" 
-    strokeLinecap="round" 
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill={fill || "none"}
+    stroke={color || "currentColor"}
+    strokeWidth="2"
+    strokeLinecap="round"
     strokeLinejoin="round"
     style={style}
   >
@@ -129,7 +115,7 @@ export default function Dashboard() {
     // Socket setup
     initiateSocketConnection();
     joinAdminRoom();
-    
+
     subscribeToAlerts((err, newAlert) => {
       if (err) return;
       setAlerts(prev => {
@@ -164,7 +150,7 @@ export default function Dashboard() {
 
   const activeAlerts = alerts.filter(a => a.status === 'Active' || a.status === 'ACTIVE');
   const resolvedAlertsCount = alerts.filter(a => a.status === 'Resolved' || a.status === 'RESOLVED').length;
-  
+
   const chartData = [
     { name: 'Code Blue', value: alerts.filter(a => a.code.toUpperCase() === 'CODE BLUE').length || 0, color: '#3b82f6' },
     { name: 'Code Red', value: alerts.filter(a => a.code.toUpperCase() === 'CODE RED').length || 0, color: '#ef4444' },
@@ -186,11 +172,11 @@ export default function Dashboard() {
     <div style={{ paddingBottom: '2rem' }}>
       {/* Top Page Title */}
       <div style={{ textAlign: 'center', padding: '1.5rem 0 0.5rem 0' }}>
-        <h1 style={{ 
-          fontSize: '1.25rem', 
-          fontWeight: '800', 
-          color: '#4c1d95', 
-          margin: 0, 
+        <h1 style={{
+          fontSize: '1.25rem',
+          fontWeight: '800',
+          color: '#4c1d95',
+          margin: 0,
           letterSpacing: '1px',
           textTransform: 'uppercase'
         }}>
@@ -199,10 +185,10 @@ export default function Dashboard() {
       </div>
 
       {/* Header */}
-      <header style={{ 
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center', 
+      <header style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         padding: '1.5rem 0',
         marginBottom: '1rem'
       }}>
@@ -215,7 +201,7 @@ export default function Dashboard() {
             <p style={{ margin: 0, fontSize: '0.875rem', color: '#64748b' }}>System Administrator</p>
           </div>
         </div>
-        
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
           <div style={{ textAlign: 'right' }}>
             <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: '700' }}>
@@ -225,16 +211,16 @@ export default function Dashboard() {
               {currentTime.toLocaleDateString([], { day: '2-digit', month: 'long', year: 'numeric' })}
             </p>
           </div>
-          <button 
+          <button
             onClick={fetchAlerts}
             title="Refresh Data"
-            style={{ 
-              width: '40px', 
-              height: '40px', 
-              borderRadius: '10px', 
-              backgroundColor: 'white', 
-              display: 'flex', 
-              alignItems: 'center', 
+            style={{
+              width: '40px',
+              height: '40px',
+              borderRadius: '10px',
+              backgroundColor: 'white',
+              display: 'flex',
+              alignItems: 'center',
               justifyContent: 'center',
               color: '#64748b',
               border: '1px solid #e2e8f0',
@@ -243,7 +229,7 @@ export default function Dashboard() {
             <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
           </button>
 
-          <button 
+          <button
             onClick={() => {
               const codes = ['Code Red', 'Code Blue', 'Code Yellow', 'Code Pink'];
               const floors = ['1st', '2nd', '3rd', 'ICU', 'ER'];
@@ -256,10 +242,10 @@ export default function Dashboard() {
               };
               setAlerts(prev => [newAlert, ...prev]);
             }}
-            style={{ 
-              padding: '0.5rem 1rem', 
-              borderRadius: '10px', 
-              backgroundColor: '#ef4444', 
+            style={{
+              padding: '0.5rem 1rem',
+              borderRadius: '10px',
+              backgroundColor: '#ef4444',
               color: 'white',
               border: 'none',
               fontWeight: '700',
@@ -287,7 +273,7 @@ export default function Dashboard() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
             <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: '800', color: '#1e293b' }}>ACTIVE ALERTS ({activeAlerts.length})</h3>
           </div>
-          
+
           {activeAlerts.length > 0 ? (
             activeAlerts.slice(0, 3).map(alert => (
               <ActiveAlertItem key={alert.id} alert={alert} />
@@ -297,17 +283,17 @@ export default function Dashboard() {
               No active alerts at the moment.
             </div>
           )}
-          
-          <button 
+
+          <button
             onClick={fetchAlerts}
-            style={{ 
-              width: '100%', 
-              padding: '0.75rem', 
+            style={{
+              width: '100%',
+              padding: '0.75rem',
               marginTop: '0.5rem',
-              backgroundColor: 'transparent', 
-              border: 'none', 
-              color: '#6366f1', 
-              fontSize: '0.85rem', 
+              backgroundColor: 'transparent',
+              border: 'none',
+              color: '#6366f1',
+              fontSize: '0.85rem',
               fontWeight: '700',
               cursor: 'pointer',
               display: 'flex',
@@ -338,10 +324,10 @@ export default function Dashboard() {
                     {visualChartData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
-                    <Label 
-                      value={totalAlerts} 
-                      position="center" 
-                      style={{ fontSize: '24px', fontWeight: '800', fill: '#1e293b' }} 
+                    <Label
+                      value={totalAlerts}
+                      position="center"
+                      style={{ fontSize: '24px', fontWeight: '800', fill: '#1e293b' }}
                     />
                   </Pie>
                 </PieChart>
@@ -379,17 +365,18 @@ export default function Dashboard() {
               {alerts.length > 0 ? (
                 alerts.slice(0, 5).map((alert, i) => (
                   <tr key={alert.id || i} style={{ borderBottom: i === Math.min(alerts.length, 5) - 1 ? 'none' : '1px solid #f8fafc' }}>
-                    <td style={{ padding: '1rem 0', fontSize: '0.85rem', fontWeight: '700', color: 
-                      alert.code.toUpperCase() === 'CODE RED' ? '#ef4444' : 
-                      alert.code.toUpperCase() === 'CODE BLUE' ? '#3b82f6' : 
-                      alert.code.toUpperCase() === 'CODE YELLOW' ? '#f59e0b' : '#ec4899'
+                    <td style={{
+                      padding: '1rem 0', fontSize: '0.85rem', fontWeight: '700', color:
+                        alert.code.toUpperCase() === 'CODE RED' ? '#ef4444' :
+                          alert.code.toUpperCase() === 'CODE BLUE' ? '#3b82f6' :
+                            alert.code.toUpperCase() === 'CODE YELLOW' ? '#f59e0b' : '#ec4899'
                     }}>{alert.code}</td>
                     <td style={{ padding: '1rem 0', fontSize: '0.85rem', color: '#475569' }}>{alert.location || `${alert.floor}F, ${alert.ward}`}</td>
                     <td style={{ padding: '1rem 0', fontSize: '0.85rem', color: '#475569' }}>{alert.time}</td>
                     <td style={{ padding: '1rem 0' }}>
-                      <span style={{ 
-                        fontSize: '0.75rem', 
-                        fontWeight: '700', 
+                      <span style={{
+                        fontSize: '0.75rem',
+                        fontWeight: '700',
                         color: (alert.status === 'Active' || alert.status === 'ACTIVE') ? '#ef4444' : '#10b981'
                       }}>
                         {alert.status}
