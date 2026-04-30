@@ -23,6 +23,7 @@ import AlertCodesPage from './pages/codes';
 import AlertHistoryPage from './pages/history';
 import AnalyticsPage from './pages/analytics';
 import SettingsPage from './pages/settings';
+import ProfilePage from './pages/profile';
 import Login from './pages/login';
 
 const SidebarLink = ({ to, icon: Icon, label }) => {
@@ -194,6 +195,7 @@ function App() {
               <Route path="/history" element={<AlertHistoryPage />} />
               <Route path="/analytics" element={<AnalyticsPage />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </div>
