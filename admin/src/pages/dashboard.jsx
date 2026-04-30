@@ -370,7 +370,6 @@ export default function Dashboard() {
                   </span>
                 </div>
               ))}
-            </div>
           </div>
         </div>
       </div>

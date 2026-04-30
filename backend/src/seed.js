@@ -86,14 +86,7 @@ async function seed() {
     )
   `);
 
-  const departments = [
-    ['Cardiology', 'Dr. Rahul Mehta', 24],
-    ['Neurology', 'Dr. Sneha Iyer', 18],
-    ['Pediatrics', 'Dr. Neha Patil', 22],
-    ['Emergency', 'Dr. Arjun Nair', 30],
-    ['Intensive Care (ICU)', 'Dr. Priya Shah', 15],
-    ['General Medicine', 'Dr. Amit Verma', 20]
-  ];
+  const departments = []; // CLEAN SLATE: No dummy departments
 
   for (const dept of departments) {
     await connection.execute(
