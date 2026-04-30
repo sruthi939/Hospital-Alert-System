@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import Dashboard from './pages/dashboard';
 import UsersPage from './pages/users';
+import DepartmentsPage from './pages/departments';
 import Login from './pages/login';
 
 const SidebarLink = ({ to, icon: Icon, label }) => {
@@ -182,6 +183,7 @@ function App() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/users" element={<UsersPage />} />
+              <Route path="/departments" element={<DepartmentsPage />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </div>
