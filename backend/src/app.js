@@ -5,6 +5,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const alertRoutes = require('./routes/alertRoutes');
+const authRoutes = require('./routes/authRoutes');
 const alertSocket = require('./sockets/alertSocket');
 
 const app = express();
@@ -16,13 +17,12 @@ const io = new Server(server, {
 app.use(cors());
 app.use(express.json());
 
-// Set io to app to access in controllers
 app.set('socketio', io);
 
 // Routes
-app.use('/api/alerts', alertRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/alerts', alertRoutes); // Protect this in routes with middleware
 
-// Initialize Sockets
 alertSocket(io);
 
 const PORT = process.env.PORT || 5000;
