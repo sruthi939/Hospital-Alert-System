@@ -57,10 +57,10 @@ const ActiveAlertItem = ({ alert, onResolve }) => {
           <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b' }}>{location || `${alert.floor}F, ${alert.ward}`}</p>
         </div>
       </div>
-      
+
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#94a3b8' }}>{time}</span>
-        <button 
+        <button
           onClick={() => onResolve(id)}
           style={{
             padding: '4px 12px',
@@ -254,7 +254,7 @@ export default function Dashboard() {
               border: '1px solid #e2e8f0',
               cursor: 'pointer'
             }}>
-            <RefreshCw size={20} className={loading ? 'animate-spin' : ''} />
+            <RefreshCw size={20} className={loading ? 'spin' : ''} />
           </button>
 
           <button
@@ -293,10 +293,10 @@ export default function Dashboard() {
 
           {activeAlerts.length > 0 ? (
             activeAlerts.slice(0, 3).map(alert => (
-              <ActiveAlertItem 
-                key={alert.id} 
-                alert={alert} 
-                onResolve={handleResolveAlert} 
+              <ActiveAlertItem
+                key={alert.id}
+                alert={alert}
+                onResolve={handleResolveAlert}
               />
             ))
           ) : (
@@ -329,32 +329,39 @@ export default function Dashboard() {
         {/* Alerts Overview Chart */}
         <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '16px', border: '1px solid #f1f5f9' }}>
           <h3 style={{ margin: '0 0 1rem 0', fontSize: '1rem', fontWeight: '800', color: '#1e293b' }}>ALERTS OVERVIEW (This Month)</h3>
-          <div style={{ display: 'flex', alignItems: 'center', height: '240px' }}>
-            <div style={{ flex: 1, height: '100%', minWidth: 0 }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={visualChartData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={60}
-                    outerRadius={80}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {visualChartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                    <Label
-                      value={totalAlerts}
-                      position="center"
-                      style={{ fontSize: '24px', fontWeight: '800', fill: '#1e293b' }}
-                    />
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '240px', width: '100%' }}>
+            <div style={{ position: 'relative', width: '240px', height: '240px' }}>
+              <PieChart width={240} height={240}>
+                <Pie
+                  data={visualChartData}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  {visualChartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                  <Label
+                    value={totalAlerts}
+                    position="center"
+                    content={({ viewBox }) => {
+                      const { cx, cy } = viewBox;
+                      return (
+                        <text x={cx} y={cy} textAnchor="middle" dominantBaseline="central">
+                          <tspan x={cx} y={cy - 5} style={{ fontSize: '1.5rem', fontWeight: '800', fill: '#1e293b' }}>{totalAlerts}</tspan>
+                          <tspan x={cx} y={cy + 20} style={{ fontSize: '0.7rem', fontWeight: '700', fill: '#94a3b8', textTransform: 'uppercase' }}>Total</tspan>
+                        </text>
+                      );
+                    }}
+                  />
+                </Pie>
+              </PieChart>
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               {visualChartData.map((item) => (
                 <div key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <div style={{ width: '12px', height: '12px', borderRadius: '3px', backgroundColor: item.color }}></div>

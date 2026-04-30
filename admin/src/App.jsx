@@ -114,7 +114,7 @@ function App() {
   }
 
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f8fafc' }}>
         {/* Sidebar */}
         <aside style={{

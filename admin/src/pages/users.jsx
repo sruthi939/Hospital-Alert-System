@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Users as UsersIcon, UserPlus, Eye, Edit2, Trash2, Mail, Phone, Shield,
-  Stethoscope, User, CheckCircle2, XCircle, Clock, ChevronRight, PlusCircle,
+import { 
+  Users as UsersIcon, UserPlus, Eye, Edit2, Trash2, Mail, Phone, Shield, 
+  Stethoscope, User, CheckCircle2, XCircle, Clock, ChevronRight, PlusCircle, 
   Activity, X, Save, RefreshCw
 } from 'lucide-react';
 import { adminService } from '../services/api';
 
 const CategoryCard = ({ title, count, icon: Icon, color, isActive, onClick }) => (
-  <div
+  <div 
     onClick={onClick}
-    style={{
+    style={{ 
       backgroundColor: 'white', padding: '1.25rem 1.5rem', borderRadius: '16px', flex: 1,
       boxShadow: isActive ? '0 4px 12px rgba(76, 29, 149, 0.1)' : '0 1px 3px rgba(0,0,0,0.05)',
       border: isActive ? '2px solid #4c1d95' : '1px solid #f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -29,8 +29,20 @@ const UserModal = ({ isOpen, onClose, onSave, user, mode }) => {
   });
 
   useEffect(() => {
-    if (user && mode === 'edit') setFormData({ ...user, password: '' });
-    else setFormData({ name: '', email: '', password: '', role: 'Nurse', department: '', staffId: '', phone: '', status: 'Active' });
+    if (user && mode === 'edit') {
+      setFormData({
+        name: user.name || '',
+        email: user.email || '',
+        password: '',
+        role: user.role || 'Nurse',
+        department: user.department || '',
+        staffId: user.staffId || '',
+        phone: user.phone || '',
+        status: user.status || 'Active'
+      });
+    } else {
+      setFormData({ name: '', email: '', password: '', role: 'Nurse', department: '', staffId: '', phone: '', status: 'Active' });
+    }
   }, [user, mode, isOpen]);
 
   if (!isOpen) return null;
@@ -44,26 +56,26 @@ const UserModal = ({ isOpen, onClose, onSave, user, mode }) => {
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <InputField label="Full Name" value={formData.name} onChange={v => setFormData({ ...formData, name: v })} />
-            <InputField label="Staff ID" value={formData.staffId} onChange={v => setFormData({ ...formData, staffId: v })} />
+            <InputField label="Full Name" value={formData.name} onChange={v => setFormData({...formData, name: v})} />
+            <InputField label="Staff ID" value={formData.staffId} onChange={v => setFormData({...formData, staffId: v})} />
           </div>
-          <InputField label="Email Address" type="email" value={formData.email} onChange={v => setFormData({ ...formData, email: v })} />
-          {mode === 'add' && <InputField label="Password" type="password" value={formData.password} onChange={v => setFormData({ ...formData, password: v })} />}
+          <InputField label="Email Address" type="email" value={formData.email} onChange={v => setFormData({...formData, email: v})} />
+          {mode === 'add' && <InputField label="Password" type="password" value={formData.password} onChange={v => setFormData({...formData, password: v})} />}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div>
               <label style={{ fontSize: '0.8rem', fontWeight: '700', color: '#64748b', marginBottom: '6px', display: 'block' }}>Role</label>
-              <select value={formData.role} onChange={e => setFormData({ ...formData, role: e.target.value })} style={{ width: '100%', padding: '0.7rem', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }}>
+              <select value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})} style={{ width: '100%', padding: '0.7rem', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }}>
                 <option value="Nurse">Nurse</option><option value="Doctor">Doctor</option><option value="EMT">Emergency Team</option><option value="Admin">System Manager</option>
               </select>
             </div>
-            <InputField label="Department" value={formData.department} onChange={v => setFormData({ ...formData, department: v })} />
+            <InputField label="Department" value={formData.department} onChange={v => setFormData({...formData, department: v})} />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <InputField label="Phone Number" value={formData.phone} onChange={v => setFormData({ ...formData, phone: v })} />
+            <InputField label="Phone Number" value={formData.phone} onChange={v => setFormData({...formData, phone: v})} />
             <div>
               <label style={{ fontSize: '0.8rem', fontWeight: '700', color: '#64748b', marginBottom: '6px', display: 'block' }}>Status</label>
-              <select value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value })} style={{ width: '100%', padding: '0.7rem', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }}>
-                <option value="Active">Active</option><option value="Pending">Pending Approval</option><option value="Inactive">Inactive</option>
+              <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} style={{ width: '100%', padding: '0.7rem', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }}>
+                <option value="Active">Active</option><option value="APPROVED">Approved</option><option value="Pending">Pending Approval</option><option value="Inactive">Inactive</option>
               </select>
             </div>
           </div>
@@ -122,7 +134,7 @@ const UserDetailsModal = ({ isOpen, onClose, user, onApprove, onReject }) => {
 const InputField = ({ label, value, onChange, type = "text" }) => (
   <div>
     <label style={{ fontSize: '0.8rem', fontWeight: '700', color: '#64748b', marginBottom: '6px', display: 'block' }}>{label}</label>
-    <input type={type} value={value} onChange={e => onChange(e.target.value)} style={{ width: '100%', padding: '0.7rem', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} />
+    <input type={type} value={value || ''} onChange={e => onChange(e.target.value)} style={{ width: '100%', padding: '0.7rem', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }} />
   </div>
 );
 
@@ -162,22 +174,22 @@ const UserTableSection = ({ title, count, icon: Icon, color, users, onAdd, onEdi
                 </td>
                 <td style={{ fontSize: '0.95rem', fontWeight: '700', color: '#475569' }}>{user.staffId}</td>
                 <td>
-                  <span style={{
+                  <span style={{ 
                     padding: '6px 14px', borderRadius: '8px', fontSize: '0.8rem', fontWeight: '800',
-                    backgroundColor: statusUpper === 'ACTIVE' ? '#f0fdf4' : statusUpper === 'PENDING' ? '#fffbeb' : '#fff1f2',
-                    color: statusUpper === 'ACTIVE' ? '#16a34a' : statusUpper === 'PENDING' ? '#d97706' : '#e11d48'
+                    backgroundColor: (statusUpper === 'ACTIVE' || statusUpper === 'APPROVED') ? '#f0fdf4' : statusUpper === 'PENDING' ? '#fffbeb' : '#fff1f2',
+                    color: (statusUpper === 'ACTIVE' || statusUpper === 'APPROVED') ? '#16a34a' : statusUpper === 'PENDING' ? '#d97706' : '#e11d48'
                   }}>{statusUpper}</span>
                 </td>
                 <td style={{ textAlign: 'center' }}>
                   <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
                     <button title="View Details" onClick={() => onView(user)} style={{ padding: '8px', borderRadius: '8px', border: 'none', backgroundColor: '#eff6ff', color: '#3b82f6', cursor: 'pointer' }}><Eye size={16} /></button>
                     <button title="Edit Staff" onClick={() => onEdit(user)} style={{ padding: '8px', borderRadius: '8px', border: 'none', backgroundColor: '#f0f9ff', color: '#0ea5e9', cursor: 'pointer' }}><Edit2 size={16} /></button>
-                    <button
-                      title={statusUpper === 'PENDING' ? 'Approve' : (statusUpper === 'ACTIVE' ? 'Deactivate' : 'Activate')}
-                      onClick={() => onToggleStatus(user)}
+                    <button 
+                      title={statusUpper === 'PENDING' ? 'Approve' : (statusUpper === 'ACTIVE' || statusUpper === 'APPROVED' ? 'Deactivate' : 'Activate')}
+                      onClick={() => onToggleStatus(user)} 
                       style={{ padding: '8px', borderRadius: '8px', border: 'none', backgroundColor: statusUpper === 'PENDING' ? '#f0fdf4' : '#f8fafc', color: statusUpper === 'PENDING' ? '#16a34a' : '#64748b', cursor: 'pointer' }}
                     >
-                      {statusUpper === 'ACTIVE' ? <XCircle size={16} /> : <CheckCircle2 size={16} />}
+                      {(statusUpper === 'ACTIVE' || statusUpper === 'APPROVED') ? <XCircle size={16} /> : <CheckCircle2 size={16} />}
                     </button>
                     <button title="Delete" onClick={() => onDelete(user.id)} style={{ padding: '8px', borderRadius: '8px', border: 'none', backgroundColor: '#fff1f2', color: '#e11d48', cursor: 'pointer' }}><Trash2 size={16} /></button>
                   </div>
@@ -220,7 +232,7 @@ export default function Users() {
   const handleToggleStatus = async (user) => {
     const currentStatus = (user.status || 'Active').toUpperCase();
     let newStatus = 'Active';
-    if (currentStatus === 'ACTIVE') newStatus = 'Inactive';
+    if (currentStatus === 'ACTIVE' || currentStatus === 'APPROVED') newStatus = 'Inactive';
     else if (currentStatus === 'PENDING') newStatus = 'Active';
     else newStatus = 'Active';
 
@@ -247,22 +259,15 @@ export default function Users() {
     <div style={{ padding: '2rem 0' }}>
       <UserModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onSave={handleSaveUser} user={selectedUser} mode={modalMode} />
       <UserDetailsModal isOpen={isDetailOpen} onClose={() => setIsDetailOpen(false)} user={selectedUser} onApprove={handleApprove} onReject={handleReject} />
-
+      
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
         <h1 style={{ margin: 0, fontSize: '1.8rem', fontWeight: '900', color: '#1e293b' }}>User Management</h1>
         <div style={{ display: 'flex', gap: '1rem' }}>
           <button 
             onClick={fetchUsers}
             style={{ 
-              padding: '0.85rem', 
-              backgroundColor: '#f1f5f9', 
-              color: '#475569', 
-              border: 'none', 
-              borderRadius: '12px', 
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
+              padding: '0.85rem', backgroundColor: '#f1f5f9', color: '#475569', border: 'none', borderRadius: '12px', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center'
             }}
             title="Refresh Data"
           >
@@ -283,7 +288,7 @@ export default function Users() {
       {(activeTab === 'All Users' || activeTab === 'Nurses') && (
         <UserTableSection title="NURSES" count={nurses.length} icon={User} color="#3b82f6" users={nurses} onAdd={() => { setModalMode('add'); setIsModalOpen(true); }} onEdit={u => { setSelectedUser(u); setModalMode('edit'); setIsModalOpen(true); }} onDelete={id => window.confirm('Delete this user?') && adminService.deleteUser(id).then(fetchUsers)} onToggleStatus={handleToggleStatus} onView={u => { setSelectedUser(u); setIsDetailOpen(true); }} />
       )}
-
+      
       {(activeTab === 'All Users' || activeTab === 'Doctors') && (
         <UserTableSection title="DOCTORS" count={doctors.length} icon={Stethoscope} color="#10b981" users={doctors} onAdd={() => { setModalMode('add'); setIsModalOpen(true); }} onEdit={u => { setSelectedUser(u); setModalMode('edit'); setIsModalOpen(true); }} onDelete={id => window.confirm('Delete this user?') && adminService.deleteUser(id).then(fetchUsers)} onToggleStatus={handleToggleStatus} onView={u => { setSelectedUser(u); setIsDetailOpen(true); }} />
       )}
