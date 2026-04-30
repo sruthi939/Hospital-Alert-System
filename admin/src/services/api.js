@@ -100,5 +100,57 @@ export const adminService = {
       console.error(`Error deleting user ${userId}:`, error);
       throw error;
     }
+  },
+
+  // Department Management
+  getDepartments: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/departments`);
+      if (!response.ok) throw new Error('Network response was not ok');
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching departments:", error);
+      throw error;
+    }
+  },
+
+  addDepartment: async (data) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/departments`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      return await response.json();
+    } catch (error) {
+      console.error("Error adding department:", error);
+      throw error;
+    }
+  },
+
+  updateDepartment: async (id, data) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/departments/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      return await response.json();
+    } catch (error) {
+      console.error(`Error updating department ${id}:`, error);
+      throw error;
+    }
+  },
+
+  deleteDepartment: async (id) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/departments/${id}`, {
+        method: 'DELETE',
+      });
+      return await response.json();
+    } catch (error) {
+      console.error(`Error deleting department ${id}:`, error);
+      throw error;
+    }
   }
 };

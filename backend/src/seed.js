@@ -74,6 +74,34 @@ async function seed() {
     )
   `);
 
+  // 3. Reset Departments Table
+  await connection.execute('DROP TABLE IF EXISTS Departments');
+  await connection.execute(`
+    CREATE TABLE Departments (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      head VARCHAR(255),
+      staff_count INT DEFAULT 0,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  const departments = [
+    ['Cardiology', 'Dr. Rahul Mehta', 24],
+    ['Neurology', 'Dr. Sneha Iyer', 18],
+    ['Pediatrics', 'Dr. Neha Patil', 22],
+    ['Emergency', 'Dr. Arjun Nair', 30],
+    ['Intensive Care (ICU)', 'Dr. Priya Shah', 15],
+    ['General Medicine', 'Dr. Amit Verma', 20]
+  ];
+
+  for (const dept of departments) {
+    await connection.execute(
+      'INSERT INTO Departments (name, head, staff_count) VALUES (?, ?, ?)',
+      dept
+    );
+  }
+
   await connection.execute('SET FOREIGN_KEY_CHECKS = 1');
   console.log('✅ FAIR RESET COMPLETE. Database is clean. Only Admin "Sruthi Alex" exists.');
   await connection.end();

@@ -7,6 +7,7 @@ require('dotenv').config();
 const alertRoutes = require('./routes/alertRoutes');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const departmentRoutes = require('./routes/departmentRoutes');
 const alertSocket = require('./sockets/alertSocket');
 
 const app = express();
@@ -33,6 +34,7 @@ const apiRouter = express.Router();
 apiRouter.use('/auth', authRoutes);
 apiRouter.use('/alerts', alertRoutes);
 apiRouter.use('/users', userRoutes);
+apiRouter.use('/departments', departmentRoutes);
 app.use('/api', apiRouter);
 
 // Fallback 404 handler
