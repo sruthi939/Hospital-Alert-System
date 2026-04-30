@@ -17,6 +17,13 @@ import {
 } from 'lucide-react';
 import Dashboard from './pages/dashboard';
 import UsersPage from './pages/users';
+import DepartmentsPage from './pages/departments';
+import WardsPage from './pages/wards';
+import AlertCodesPage from './pages/codes';
+import AlertHistoryPage from './pages/history';
+import AnalyticsPage from './pages/analytics';
+import SettingsPage from './pages/settings';
+import ProfilePage from './pages/profile';
 import Login from './pages/login';
 
 const SidebarLink = ({ to, icon: Icon, label }) => {
@@ -113,7 +120,7 @@ function App() {
   }
 
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f8fafc' }}>
         {/* Sidebar */}
         <aside style={{
@@ -157,7 +164,7 @@ function App() {
             <SidebarLink to="/wards" icon={DoorOpen} label="Ward / Rooms" />
             <SidebarLink to="/codes" icon={Hash} label="Alert Codes" />
             <SidebarLink to="/history" icon={History} label="Alerts History" />
-            <SidebarLink to="/reports" icon={BarChart3} label="Reports & Analytics" />
+            <SidebarLink to="/analytics" icon={BarChart3} label="Reports & Analytics" />
             <SidebarLink to="/settings" icon={Settings} label="System Settings" />
 
             <div style={{ marginTop: 'auto', marginBottom: '1.5rem' }}>
@@ -182,6 +189,13 @@ function App() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/users" element={<UsersPage />} />
+              <Route path="/departments" element={<DepartmentsPage />} />
+              <Route path="/wards" element={<WardsPage />} />
+              <Route path="/codes" element={<AlertCodesPage />} />
+              <Route path="/history" element={<AlertHistoryPage />} />
+              <Route path="/analytics" element={<AnalyticsPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </div>
