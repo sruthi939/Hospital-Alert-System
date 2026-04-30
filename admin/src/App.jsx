@@ -181,12 +181,6 @@ function App() {
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/users" element={<UsersPage />} />
-              <Route path="*" element={
-                <div style={{ padding: '2rem', textAlign: 'center' }}>
-                  <h2>Page Not Found</h2>
-                  <p>Current Path: {window.location.pathname}</p>
-                </div>
-              } />
             </Routes>
           </div>
         </main>

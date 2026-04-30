@@ -166,7 +166,8 @@ export default function Dashboard() {
     { name: 'Code Pink', value: 25, color: '#ec4899' },
   ];
 
-  const totalAlerts = alerts.length || 125; // Default to 125 if empty for design consistency
+  const totalAlerts = alerts.length;
+  const resolvedAlertsCount = alerts.filter(a => a.status === 'Resolved' || a.status === 'RESOLVED').length;
 
   return (
     <div style={{ paddingBottom: '2rem' }}>
@@ -262,7 +263,7 @@ export default function Dashboard() {
       <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '2rem' }}>
         <StatCard title="Total Alerts" value={totalAlerts} subtitle="This Month" color="#3b82f6" />
         <StatCard title="Active Alerts" value={activeAlerts.length} subtitle="Right Now" color="#ef4444" />
-        <StatCard title="Resolved Alerts" value={resolvedAlertsCount || 112} subtitle="This Month" color="#10b981" />
+        <StatCard title="Resolved Alerts" value={resolvedAlertsCount} subtitle="This Month" color="#10b981" />
         <StatCard title="Avg. Response Time" value="02:45" subtitle="Minutes" color="#f59e0b" />
       </div>
 
