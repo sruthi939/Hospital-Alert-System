@@ -19,8 +19,8 @@ const StatCard = ({ title, value, subtitle, color }) => (
   </div>
 );
 
-const ActiveAlertItem = ({ alert }) => {
-  const { code, location, time, status } = alert;
+const ActiveAlertItem = ({ alert, onResolve }) => {
+  const { id, code, location, time, status } = alert;
 
   const colors = {
     'CODE RED': { bg: '#fff1f2', text: '#e11d48', border: '#fecdd3', icon: <AlertCircle size={18} /> },
@@ -54,10 +54,31 @@ const ActiveAlertItem = ({ alert }) => {
         </div>
         <div>
           <h4 style={{ margin: 0, fontSize: '0.9rem', fontWeight: '700', color: style.text }}>{code}</h4>
-          <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b' }}>{location}</p>
+          <p style={{ margin: 0, fontSize: '0.75rem', color: '#64748b' }}>{location || `${alert.floor}F, ${alert.ward}`}</p>
         </div>
       </div>
-      <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#94a3b8' }}>{time}</span>
+      
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <span style={{ fontSize: '0.75rem', fontWeight: '600', color: '#94a3b8' }}>{time}</span>
+        <button 
+          onClick={() => onResolve(id)}
+          style={{
+            padding: '4px 12px',
+            borderRadius: '6px',
+            backgroundColor: 'white',
+            border: `1px solid ${style.border}`,
+            color: style.text,
+            fontSize: '0.7rem',
+            fontWeight: '700',
+            cursor: 'pointer',
+            transition: 'all 0.2s'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = style.bg}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'white'}
+        >
+          Resolve
+        </button>
+      </div>
     </div>
   );
 };
@@ -139,35 +160,41 @@ export default function Dashboard() {
 
   const fetchAlerts = async () => {
     setLoading(true);
-    const data = await adminService.getAllAlerts();
-    setAlerts(data);
-    setLoading(false);
+    try {
+      const data = await adminService.getAllAlerts();
+      setAlerts(data);
+    } catch (err) {
+      console.error("Error in fetchAlerts:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResolveAlert = async (alertId) => {
+    try {
+      await adminService.updateSystemAlert(alertId, { status: 'Resolved' });
+      await fetchAlerts(); // Refresh all data
+    } catch (err) {
+      console.error("Failed to resolve alert:", err);
+    }
   };
 
   const handleQuickAction = (action) => {
     alert(`Action: ${action} initiated. In a full system, this would open a modal or navigate.`);
   };
 
-  const activeAlerts = alerts.filter(a => a.status === 'Active' || a.status === 'ACTIVE');
-  const resolvedAlertsCount = alerts.filter(a => a.status === 'Resolved' || a.status === 'RESOLVED').length;
+  const activeAlerts = alerts.filter(a => (a.status || '').toUpperCase() === 'ACTIVE');
+  const resolvedAlertsCount = alerts.filter(a => (a.status || '').toUpperCase() === 'RESOLVED').length;
+  const totalAlerts = alerts.length;
 
   const chartData = [
-    { name: 'Code Blue', value: alerts.filter(a => a.code.toUpperCase() === 'CODE BLUE').length || 0, color: '#3b82f6' },
-    { name: 'Code Red', value: alerts.filter(a => a.code.toUpperCase() === 'CODE RED').length || 0, color: '#ef4444' },
-    { name: 'Code Yellow', value: alerts.filter(a => a.code.toUpperCase() === 'CODE YELLOW').length || 0, color: '#f59e0b' },
-    { name: 'Code Pink', value: alerts.filter(a => a.code.toUpperCase() === 'CODE PINK').length || 0, color: '#ec4899' },
+    { name: 'Code Blue', value: alerts.filter(a => (a.code_type || a.code || '').toUpperCase() === 'CODE BLUE').length, color: '#3b82f6' },
+    { name: 'Code Red', value: alerts.filter(a => (a.code_type || a.code || '').toUpperCase() === 'CODE RED').length, color: '#ef4444' },
+    { name: 'Code Yellow', value: alerts.filter(a => (a.code_type || a.code || '').toUpperCase() === 'CODE YELLOW').length, color: '#f59e0b' },
+    { name: 'Code Pink', value: alerts.filter(a => (a.code_type || a.code || '').toUpperCase() === 'CODE PINK').length, color: '#ec4899' },
   ];
 
-  // If no data, use some dummy values for the chart to keep it visual
-  const visualChartData = chartData.some(d => d.value > 0) ? chartData : [
-    { name: 'Code Blue', value: 45, color: '#3b82f6' },
-    { name: 'Code Red', value: 30, color: '#ef4444' },
-    { name: 'Code Yellow', value: 25, color: '#f59e0b' },
-    { name: 'Code Pink', value: 25, color: '#ec4899' },
-  ];
-
-  const totalAlerts = alerts.length;
-  const resolvedAlertsCount = alerts.filter(a => a.status === 'Resolved' || a.status === 'RESOLVED').length;
+  const visualChartData = chartData;
 
   return (
     <div style={{ paddingBottom: '2rem' }}>
@@ -231,40 +258,29 @@ export default function Dashboard() {
           </button>
 
           <button
-            onClick={() => {
-              const codes = ['Code Red', 'Code Blue', 'Code Yellow', 'Code Pink'];
-              const floors = ['1st', '2nd', '3rd', 'ICU', 'ER'];
-              const newAlert = {
-                id: Date.now(),
-                code: codes[Math.floor(Math.random() * codes.length)],
-                location: `${floors[Math.floor(Math.random() * floors.length)]} Floor, Room ${Math.floor(Math.random() * 500)}`,
-                status: 'Active',
-                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-              };
-              setAlerts(prev => [newAlert, ...prev]);
-            }}
+            onClick={fetchAlerts}
             style={{
               padding: '0.5rem 1rem',
               borderRadius: '10px',
-              backgroundColor: '#ef4444',
+              backgroundColor: '#4c1d95',
               color: 'white',
               border: 'none',
               fontWeight: '700',
               fontSize: '0.8rem',
               cursor: 'pointer',
-              boxShadow: '0 4px 10px rgba(239, 68, 68, 0.3)'
+              boxShadow: '0 4px 10px rgba(76, 29, 149, 0.2)'
             }}>
-            Simulate Alert
+            Manual Sync
           </button>
         </div>
       </header>
 
       {/* Stats Row */}
       <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '2rem' }}>
-        <StatCard title="Total Alerts" value={totalAlerts} subtitle="This Month" color="#3b82f6" />
-        <StatCard title="Active Alerts" value={activeAlerts.length} subtitle="Right Now" color="#ef4444" />
-        <StatCard title="Resolved Alerts" value={resolvedAlertsCount} subtitle="This Month" color="#10b981" />
-        <StatCard title="Avg. Response Time" value="02:45" subtitle="Minutes" color="#f59e0b" />
+        <StatCard title="Total Alerts" value={totalAlerts} subtitle="Overall History" color="#3b82f6" />
+        <StatCard title="Active Alerts" value={activeAlerts.length} subtitle="Live Tracking" color="#ef4444" />
+        <StatCard title="Resolved Alerts" value={resolvedAlertsCount} subtitle="Successfully Handled" color="#10b981" />
+        <StatCard title="Avg. Response Time" value="--" subtitle="Calculating..." color="#f59e0b" />
       </div>
 
       {/* Middle Row */}
@@ -277,7 +293,11 @@ export default function Dashboard() {
 
           {activeAlerts.length > 0 ? (
             activeAlerts.slice(0, 3).map(alert => (
-              <ActiveAlertItem key={alert.id} alert={alert} />
+              <ActiveAlertItem 
+                key={alert.id} 
+                alert={alert} 
+                onResolve={handleResolveAlert} 
+              />
             ))
           ) : (
             <div style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>
@@ -368,10 +388,10 @@ export default function Dashboard() {
                   <tr key={alert.id || i} style={{ borderBottom: i === Math.min(alerts.length, 5) - 1 ? 'none' : '1px solid #f8fafc' }}>
                     <td style={{
                       padding: '1rem 0', fontSize: '0.85rem', fontWeight: '700', color:
-                        alert.code.toUpperCase() === 'CODE RED' ? '#ef4444' :
-                          alert.code.toUpperCase() === 'CODE BLUE' ? '#3b82f6' :
-                            alert.code.toUpperCase() === 'CODE YELLOW' ? '#f59e0b' : '#ec4899'
-                    }}>{alert.code}</td>
+                        (alert.code_type || alert.code || '').toUpperCase() === 'CODE RED' ? '#ef4444' :
+                          (alert.code_type || alert.code || '').toUpperCase() === 'CODE BLUE' ? '#3b82f6' :
+                            (alert.code_type || alert.code || '').toUpperCase() === 'CODE YELLOW' ? '#f59e0b' : '#ec4899'
+                    }}>{alert.code_type || alert.code}</td>
                     <td style={{ padding: '1rem 0', fontSize: '0.85rem', color: '#475569' }}>{alert.location || `${alert.floor}F, ${alert.ward}`}</td>
                     <td style={{ padding: '1rem 0', fontSize: '0.85rem', color: '#475569' }}>{alert.time}</td>
                     <td style={{ padding: '1rem 0' }}>

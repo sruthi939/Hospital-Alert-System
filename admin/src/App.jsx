@@ -1,5 +1,5 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import {
   LayoutDashboard, Users, Building2,
   DoorOpen,
@@ -12,12 +12,12 @@ import {
   Bell,
   ShieldAlert,
   Heart,
-  Menu,
   Search,
   ChevronDown
 } from 'lucide-react';
 import Dashboard from './pages/dashboard';
 import UsersPage from './pages/users';
+import Login from './pages/login';
 
 const SidebarLink = ({ to, icon: Icon, label }) => {
   const location = useLocation();
@@ -44,75 +44,74 @@ const SidebarLink = ({ to, icon: Icon, label }) => {
   );
 };
 
-const TopBar = () => (
-  <header style={{
-    height: '64px',
-    backgroundColor: 'white',
-    borderBottom: '1px solid #e2e8f0',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '0 2rem',
-    position: 'sticky',
-    top: 0,
-    zIndex: 40
-  }}>
-    <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flex: 1 }}>
-      <Menu size={24} style={{ cursor: 'pointer', color: '#64748b' }} />
-      <div style={{ position: 'relative', width: '400px' }}>
-        <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
-        <input
-          type="text"
-          placeholder="Search users by name, email, or ID..."
-          style={{
-            width: '100%',
-            padding: '0.6rem 1rem 0.6rem 2.5rem',
-            borderRadius: '8px',
-            border: '1px solid #e2e8f0',
-            backgroundColor: '#f8fafc',
-            fontSize: '0.9rem',
-            outline: 'none'
-          }}
-        />
-      </div>
-    </div>
+const TopBar = ({ onLogout }) => {
+  const adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}');
 
-    <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-      <div style={{ position: 'relative', cursor: 'pointer' }}>
-        <Bell size={22} style={{ color: '#64748b' }} />
-        <span style={{
-          position: 'absolute',
-          top: '-4px',
-          right: '-4px',
-          backgroundColor: '#ef4444',
-          color: 'white',
-          fontSize: '10px',
-          fontWeight: 'bold',
-          width: '16px',
-          height: '16px',
-          borderRadius: '50%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          border: '2px solid white'
-        }}>5</span>
+  return (
+    <header style={{
+      height: '64px',
+      backgroundColor: 'white',
+      borderBottom: '1px solid #e2e8f0',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: '0 2rem',
+      position: 'sticky',
+      top: 0,
+      zIndex: 40
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flex: 1 }}>
+        <div style={{ position: 'relative', width: '400px' }}>
+          <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+          <input
+            type="text"
+            placeholder="Search users by name, email, or ID..."
+            style={{
+              width: '100%',
+              padding: '0.6rem 1rem 0.6rem 2.5rem',
+              borderRadius: '8px',
+              border: '1px solid #e2e8f0',
+              backgroundColor: '#f8fafc',
+              fontSize: '0.9rem',
+              outline: 'none'
+            }}
+          />
+        </div>
       </div>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingLeft: '1.5rem', borderLeft: '1px solid #e2e8f0', cursor: 'pointer' }}>
-        <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#e2e8f0', overflow: 'hidden' }}>
-          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="Admin" />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingLeft: '1.5rem', borderLeft: '1px solid #e2e8f0', cursor: 'pointer' }}>
+          <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#e2e8f0', overflow: 'hidden' }}>
+            <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${adminUser.name || 'Admin'}`} alt="Admin" />
+          </div>
+          <div>
+            <div style={{ fontSize: '0.9rem', fontWeight: '700', color: '#1e293b' }}>{adminUser.name || 'Admin'}</div>
+            <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{adminUser.role || 'System Administrator'}</div>
+          </div>
+          <ChevronDown size={16} style={{ color: '#64748b' }} />
         </div>
-        <div>
-          <div style={{ fontSize: '0.9rem', fontWeight: '700', color: '#1e293b' }}>Admin</div>
-          <div style={{ fontSize: '0.75rem', color: '#64748b' }}>System Administrator</div>
-        </div>
-        <ChevronDown size={16} style={{ color: '#64748b' }} />
       </div>
-    </div>
-  </header>
-);
+    </header>
+  );
+};
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('adminToken'));
+
+  const handleLoginSuccess = () => {
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminUser');
+    setIsAuthenticated(false);
+  };
+
+  if (!isAuthenticated) {
+    return <Login onLoginSuccess={handleLoginSuccess} />;
+  }
+
   return (
     <Router>
       <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f8fafc' }}>
@@ -163,7 +162,9 @@ function App() {
 
             <div style={{ marginTop: 'auto', marginBottom: '1.5rem' }}>
               <SidebarLink to="/profile" icon={UserCircle} label="Profile" />
-              <SidebarLink to="/logout" icon={LogOut} label="Logout" />
+              <div onClick={handleLogout} style={{ cursor: 'pointer' }}>
+                <SidebarLink to="/logout" icon={LogOut} label="Logout" />
+              </div>
             </div>
           </nav>
         </aside>
@@ -176,11 +177,12 @@ function App() {
           display: 'flex',
           flexDirection: 'column'
         }}>
-          <TopBar />
+          <TopBar onLogout={handleLogout} />
           <div style={{ padding: '0 2rem' }}>
             <Routes>
               <Route path="/" element={<Dashboard />} />
               <Route path="/users" element={<UsersPage />} />
+              <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </div>
         </main>

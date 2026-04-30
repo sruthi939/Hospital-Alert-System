@@ -1,6 +1,22 @@
 const API_BASE_URL = 'http://localhost:5000/api';
 
 export const adminService = {
+  // Authentication
+  login: async (email, password) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      if (!response.ok) throw new Error('Login failed');
+      return await response.json();
+    } catch (error) {
+      console.error("Login error:", error);
+      throw error;
+    }
+  },
+
   // Fetch system-wide alerts
   getAllAlerts: async () => {
     try {
@@ -9,18 +25,14 @@ export const adminService = {
       return await response.json();
     } catch (error) {
       console.error("Error fetching alerts:", error);
-      // Fallback data for frontend demo
-      return [
-        { id: 1, code: 'Code Blue', floor: '3', ward: 'ICU', room: '302', status: 'Active', time: '10:05 AM' },
-        { id: 2, code: 'Code Red', floor: '1', ward: 'ER', room: '105', status: 'Active', time: '10:15 AM' }
-      ];
+      throw error;
     }
   },
 
-  // Update alert configuration or status globally
+  // Update alert status globally
   updateSystemAlert: async (alertId, data) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/alerts/system/${alertId}`, {
+      const response = await fetch(`${API_BASE_URL}/alerts/${alertId}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -58,6 +70,34 @@ export const adminService = {
       return await response.json();
     } catch (error) {
       console.error("Error adding user:", error);
+      throw error;
+    }
+  },
+
+  updateUser: async (userId, userData) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+      return await response.json();
+    } catch (error) {
+      console.error(`Error updating user ${userId}:`, error);
+      throw error;
+    }
+  },
+
+  deleteUser: async (userId) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+        method: 'DELETE',
+      });
+      return await response.json();
+    } catch (error) {
+      console.error(`Error deleting user ${userId}:`, error);
       throw error;
     }
   }

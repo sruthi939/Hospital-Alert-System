@@ -32,8 +32,20 @@ const UserModel = {
   },
 
   getAll: async () => {
-    const [rows] = await db.execute('SELECT id, name, email, role, staffId, department, status FROM Users');
+    const [rows] = await db.execute('SELECT id, name, email, role, staffId, department, status, phone FROM Users');
     return rows;
+  },
+
+  update: async (id, userData) => {
+    const { name, email, role, staffId, department, status, phone } = userData;
+    await db.execute(
+      'UPDATE Users SET name = ?, email = ?, role = ?, staffId = ?, department = ?, status = ?, phone = ? WHERE id = ?',
+      [name, email, role, staffId, department, status, phone || null, id]
+    );
+  },
+
+  delete: async (id) => {
+    await db.execute('DELETE FROM Users WHERE id = ?', [id]);
   }
 };
 

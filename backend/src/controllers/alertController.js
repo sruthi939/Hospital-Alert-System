@@ -25,3 +25,15 @@ exports.getRecentAlerts = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+exports.updateAlertStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+    await AlertModel.updateStatus(id, status);
+    res.json({ success: true, message: 'Alert status updated' });
+  } catch (error) {
+    console.error('Update Alert Status Error:', error.message);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
