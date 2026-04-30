@@ -4,7 +4,6 @@ exports.triggerAlert = async (req, res) => {
   try {
     const alertId = await AlertModel.create(req.body);
     
-    // Broadcast via Socket.io (handled in app.js or socket service)
     const io = req.app.get('socketio');
     if (io) {
       io.emit('new_alert', { id: alertId, ...req.body, created_at: new Date() });
@@ -12,8 +11,8 @@ exports.triggerAlert = async (req, res) => {
 
     res.status(201).json({ success: true, alertId });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: 'Server Error' });
+    console.error('Trigger Alert Error:', error.message);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -22,7 +21,7 @@ exports.getRecentAlerts = async (req, res) => {
     const alerts = await AlertModel.getRecent();
     res.json(alerts);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: 'Server Error' });
+    console.error('Get Recent Alerts Error:', error.message);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
