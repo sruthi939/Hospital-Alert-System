@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   DoorOpen, Search, Plus, Edit2, Trash2, LayoutGrid, 
   ArrowRight, X, Save, RefreshCw, Building2
@@ -84,6 +85,7 @@ const WardModal = ({ isOpen, onClose, onSave, ward, mode }) => {
 export default function Wards() {
   const [wards, setWards] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('By Ward');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('add');
@@ -255,15 +257,41 @@ export default function Wards() {
             </table>
           </div>
         ) : (
-          <div style={{ textAlign: 'center', padding: '5rem', color: '#94a3b8' }}>
-             <LayoutGrid size={48} style={{ marginBottom: '1rem', opacity: 0.2 }} />
-             <p style={{ fontWeight: '700' }}>Room management coming soon.</p>
-             <p style={{ fontSize: '0.8rem' }}>Please manage by Ward for now.</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1.5rem' }}>
+            {wards.length > 0 ? wards.flatMap(ward => 
+              Array.from({ length: ward.room_count }, (_, i) => ({
+                id: `${ward.id}-${i}`,
+                name: `Room ${100 + i + 1}`,
+                ward: ward.name,
+                dept: ward.department
+              }))
+            ).filter(room => 
+              room.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+              room.ward.toLowerCase().includes(searchTerm.toLowerCase())
+            ).map(room => (
+              <div key={room.id} style={{ backgroundColor: 'white', padding: '1.25rem', borderRadius: '16px', border: '1px solid #f1f5f9', boxShadow: '0 1px 3px rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                  <DoorOpen size={16} color="#4c1d95" />
+                  <span style={{ fontWeight: '800', color: '#1e293b' }}>{room.name}</span>
+                </div>
+                <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: '700' }}>{room.ward}</div>
+                <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontWeight: '600', marginTop: '4px' }}>{room.dept}</div>
+                <div style={{ marginTop: '12px', padding: '4px 8px', backgroundColor: '#f0fdf4', color: '#16a34a', borderRadius: '6px', fontSize: '0.65rem', fontWeight: '800', display: 'inline-block' }}>Available</div>
+              </div>
+            )) : (
+              <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '5rem', color: '#94a3b8' }}>
+                <LayoutGrid size={48} style={{ marginBottom: '1rem', opacity: 0.2 }} />
+                <p style={{ fontWeight: '700' }}>No rooms to display. Add a ward with room counts first.</p>
+              </div>
+            )}
           </div>
         )}
 
         <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'center' }}>
-          <button style={{ backgroundColor: 'transparent', border: 'none', color: '#4c1d95', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem' }}>
+          <button 
+            onClick={() => navigate('/history')}
+            style={{ backgroundColor: 'transparent', border: 'none', color: '#4c1d95', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem' }}
+          >
             View All Wards <ArrowRight size={18} />
           </button>
         </div>

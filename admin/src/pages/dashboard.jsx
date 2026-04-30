@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Bell, Clock, CheckCircle2, AlertCircle, UserPlus, PlusSquare, Settings, FileText, Search, ChevronRight, TrendingUp, MapPin, RefreshCw } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Label } from 'recharts';
 import { initiateSocketConnection, subscribeToAlerts, disconnectSocket, joinAdminRoom } from '../services/socket';
@@ -306,7 +307,7 @@ export default function Dashboard() {
           )}
 
           <button
-            onClick={fetchAlerts}
+            onClick={() => navigate('/history')}
             style={{
               width: '100%',
               padding: '0.75rem',
@@ -423,10 +424,10 @@ export default function Dashboard() {
         {/* Quick Actions */}
         <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '16px', border: '1px solid #f1f5f9' }}>
           <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1rem', fontWeight: '800', color: '#1e293b' }}>QUICK ACTIONS</h3>
-          <QuickAction icon={UserPlus} label="Add New User" onClick={() => handleQuickAction('Add User')} />
-          <QuickAction icon={PlusSquare} label="Add Department" onClick={() => handleQuickAction('Add Department')} />
-          <QuickAction icon={FileText} label="Manage Alert Codes" onClick={() => handleQuickAction('Manage Codes')} />
-          <QuickAction icon={Settings} label="System Settings" onClick={() => handleQuickAction('Settings')} />
+          <QuickAction icon={UserPlus} label="Add New User" onClick={() => navigate('/users')} />
+          <QuickAction icon={PlusSquare} label="Add Department" onClick={() => navigate('/departments')} />
+          <QuickAction icon={FileText} label="Manage Alert Codes" onClick={() => navigate('/codes')} />
+          <QuickAction icon={Settings} label="System Settings" onClick={() => navigate('/settings')} />
         </div>
       </div>
     </div>

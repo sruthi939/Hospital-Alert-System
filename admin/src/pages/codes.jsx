@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ShieldPlus, Search, Plus, Edit2, Trash2, Palette, ArrowRight, X, Save, RefreshCw, Hash } from 'lucide-react';
 import { adminService } from '../services/api';
 
@@ -92,6 +93,7 @@ const AlertCodeModal = ({ isOpen, onClose, onSave, alertCode, mode }) => {
 export default function AlertCodes() {
   const [codes, setCodes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('add');
   const [selectedCode, setSelectedCode] = useState(null);
@@ -249,7 +251,10 @@ export default function AlertCodes() {
         </div>
 
         <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'center' }}>
-          <button style={{ backgroundColor: 'transparent', border: 'none', color: '#4c1d95', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem' }}>
+          <button 
+            onClick={() => navigate('/history')}
+            style={{ backgroundColor: 'transparent', border: 'none', color: '#4c1d95', fontWeight: '800', display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem' }}
+          >
             View All Alert Codes <ArrowRight size={18} />
           </button>
         </div>

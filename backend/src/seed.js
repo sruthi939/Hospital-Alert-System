@@ -45,19 +45,18 @@ async function seed() {
   const salt = await bcrypt.genSalt(10);
   const adminPassword = await bcrypt.hash('admin123', salt);
 
-  // ONLY the real admin account
-  const users = [
+  const adminUsers = [
     ['Sruthi Alex', 'admin@hospital.com', adminPassword, 'Admin', 'SYS-001', '9875700001', 'IT Dept', 'APPROVED']
   ];
 
-  for (const user of users) {
+  for (const user of adminUsers) {
     await connection.execute(
       'INSERT INTO Users (name, email, password_hash, role, staffId, phone, department, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
       user
     );
   }
 
-  // 2. Reset Alerts Table (Completely Empty)
+  // 2. Reset Alerts Table
   await connection.execute('DROP TABLE IF EXISTS Alerts');
   await connection.execute(`
     CREATE TABLE Alerts (
@@ -68,11 +67,23 @@ async function seed() {
       room VARCHAR(20),
       notes TEXT,
       status VARCHAR(20) DEFAULT 'Active',
+      triggered_by VARCHAR(255),
+      action_taken VARCHAR(255),
+      department VARCHAR(100),
       initiator_id INT,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       resolved_at TIMESTAMP NULL
     )
   `);
+
+  const historicalAlerts = []; // CLEAN SLATE: Only real alerts will be logged here
+
+  for (const alert of historicalAlerts) {
+    await connection.execute(
+      'INSERT INTO Alerts (code_type, floor, ward, room, notes, status, triggered_by, action_taken, department) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      alert
+    );
+  }
 
   // 3. Reset Departments Table
   await connection.execute('DROP TABLE IF EXISTS Departments');
@@ -86,15 +97,6 @@ async function seed() {
     )
   `);
 
-  const departments = []; // CLEAN SLATE: No dummy departments
-
-  for (const dept of departments) {
-    await connection.execute(
-      'INSERT INTO Departments (name, head, staff_count) VALUES (?, ?, ?)',
-      dept
-    );
-  }
-
   // 4. Reset Wards Table
   await connection.execute('DROP TABLE IF EXISTS Wards');
   await connection.execute(`
@@ -107,15 +109,6 @@ async function seed() {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
   `);
-
-  const wards = []; // CLEAN SLATE
-
-  for (const ward of wards) {
-    await connection.execute(
-      'INSERT INTO Wards (name, department, room_count, bed_count) VALUES (?, ?, ?, ?)',
-      ward
-    );
-  }
 
   // 5. Reset AlertCodes Table
   await connection.execute('DROP TABLE IF EXISTS AlertCodes');
@@ -146,6 +139,26 @@ async function seed() {
       code
     );
   }
+
+  // 6. Reset Settings Table
+  await connection.execute('DROP TABLE IF EXISTS Settings');
+  await connection.execute(`
+    CREATE TABLE Settings (
+      id INT PRIMARY KEY,
+      hospital_name VARCHAR(255),
+      address TEXT,
+      timezone VARCHAR(100),
+      date_format VARCHAR(50),
+      time_format VARCHAR(50),
+      language VARCHAR(50),
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    )
+  `);
+
+  await connection.execute(`
+    INSERT INTO Settings (id, hospital_name, address, timezone, date_format, time_format, language)
+    VALUES (1, 'City Care Hospital', '123, Health City, Medical District, Mumbai', '(GMT+05:30) Asia/Kolkata', 'DD/MM/YYYY', '12 Hour (AM/PM)', 'English')
+  `);
 
   await connection.execute('SET FOREIGN_KEY_CHECKS = 1');
   console.log('✅ FAIR RESET COMPLETE. Database is clean. Only Admin "Sruthi Alex" exists.');

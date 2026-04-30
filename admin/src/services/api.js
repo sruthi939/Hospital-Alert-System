@@ -256,5 +256,31 @@ export const adminService = {
       console.error(`Error deleting alert code ${id}:`, error);
       throw error;
     }
+  },
+
+  // System Settings
+  getSettings: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/settings`);
+      if (!response.ok) throw new Error('Network response was not ok');
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching settings:", error);
+      throw error;
+    }
+  },
+
+  updateSettings: async (data) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/settings`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      return await response.json();
+    } catch (error) {
+      console.error("Error updating settings:", error);
+      throw error;
+    }
   }
 };

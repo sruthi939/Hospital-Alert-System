@@ -10,6 +10,7 @@ const userRoutes = require('./routes/userRoutes');
 const departmentRoutes = require('./routes/departmentRoutes');
 const wardRoutes = require('./routes/wardRoutes');
 const alertCodeRoutes = require('./routes/alertCodeRoutes');
+const settingsRoutes = require('./routes/settingsRoutes');
 const alertSocket = require('./sockets/alertSocket');
 
 const app = express();
@@ -39,6 +40,7 @@ apiRouter.use('/users', userRoutes);
 apiRouter.use('/departments', departmentRoutes);
 apiRouter.use('/wards', wardRoutes);
 apiRouter.use('/codes', alertCodeRoutes);
+apiRouter.use('/settings', settingsRoutes);
 app.use('/api', apiRouter);
 
 // Fallback 404 handler
