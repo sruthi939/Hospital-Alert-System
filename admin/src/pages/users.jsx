@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Users as UsersIcon, UserPlus, Eye, Edit2, Trash2, Mail, Phone, Shield,
   Stethoscope, User, CheckCircle2, XCircle, Clock, ChevronRight, PlusCircle,
-  Activity, X, Save
+  Activity, X, Save, RefreshCw
 } from 'lucide-react';
 import { adminService } from '../services/api';
 
@@ -250,7 +250,26 @@ export default function Users() {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
         <h1 style={{ margin: 0, fontSize: '1.8rem', fontWeight: '900', color: '#1e293b' }}>User Management</h1>
-        <button onClick={() => { setModalMode('add'); setSelectedUser(null); setIsModalOpen(true); }} style={{ padding: '0.85rem 1.75rem', backgroundColor: '#4c1d95', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '800', fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 4px 12px rgba(76, 29, 149, 0.2)' }}>Add Staff Member</button>
+        <div style={{ display: 'flex', gap: '1rem' }}>
+          <button 
+            onClick={fetchUsers}
+            style={{ 
+              padding: '0.85rem', 
+              backgroundColor: '#f1f5f9', 
+              color: '#475569', 
+              border: 'none', 
+              borderRadius: '12px', 
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+            title="Refresh Data"
+          >
+            <RefreshCw size={20} className={loading ? "spin" : ""} />
+          </button>
+          <button onClick={() => { setModalMode('add'); setSelectedUser(null); setIsModalOpen(true); }} style={{ padding: '0.85rem 1.75rem', backgroundColor: '#4c1d95', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '800', fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 4px 12px rgba(76, 29, 149, 0.2)' }}>Add Staff Member</button>
+        </div>
       </div>
 
       <div style={{ display: 'flex', gap: '1.5rem', marginBottom: '3rem', overflowX: 'auto', paddingBottom: '0.5rem' }}>
