@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  ShieldPlus, Search, Plus, Edit2, Trash2, Palette, 
-  ArrowRight, X, Save, RefreshCw, Hash
-} from 'lucide-react';
+import { ShieldPlus, Search, Plus, Edit2, Trash2, Palette, ArrowRight, X, Save, RefreshCw, Hash } from 'lucide-react';
 import { adminService } from '../services/api';
 
 const AlertCodeModal = ({ isOpen, onClose, onSave, alertCode, mode }) => {
@@ -34,20 +31,20 @@ const AlertCodeModal = ({ isOpen, onClose, onSave, alertCode, mode }) => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
           <div>
             <label style={{ fontSize: '0.8rem', fontWeight: '700', color: '#64748b', marginBottom: '6px', display: 'block' }}>Code Name</label>
-            <input 
-              type="text" 
-              value={formData.name} 
-              onChange={e => setFormData({...formData, name: e.target.value})}
+            <input
+              type="text"
+              value={formData.name}
+              onChange={e => setFormData({ ...formData, name: e.target.value })}
               style={{ width: '100%', padding: '0.7rem', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }}
               placeholder="e.g. Code Blue"
             />
           </div>
           <div>
             <label style={{ fontSize: '0.8rem', fontWeight: '700', color: '#64748b', marginBottom: '6px', display: 'block' }}>Code (Short Identifier)</label>
-            <input 
-              type="text" 
-              value={formData.code} 
-              onChange={e => setFormData({...formData, code: e.target.value.toUpperCase()})}
+            <input
+              type="text"
+              value={formData.code}
+              onChange={e => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
               style={{ width: '100%', padding: '0.7rem', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }}
               placeholder="e.g. CODE BLUE"
             />
@@ -56,10 +53,10 @@ const AlertCodeModal = ({ isOpen, onClose, onSave, alertCode, mode }) => {
             <div>
               <label style={{ fontSize: '0.8rem', fontWeight: '700', color: '#64748b', marginBottom: '6px', display: 'block' }}>Identify Color</label>
               <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                <input 
-                  type="color" 
-                  value={formData.color} 
-                  onChange={e => setFormData({...formData, color: e.target.value})}
+                <input
+                  type="color"
+                  value={formData.color}
+                  onChange={e => setFormData({ ...formData, color: e.target.value })}
                   style={{ width: '40px', height: '40px', border: 'none', borderRadius: '8px', cursor: 'pointer', backgroundColor: 'transparent' }}
                 />
                 <span style={{ fontSize: '0.85rem', fontWeight: '600', color: '#475569' }}>{formData.color.toUpperCase()}</span>
@@ -67,7 +64,7 @@ const AlertCodeModal = ({ isOpen, onClose, onSave, alertCode, mode }) => {
             </div>
             <div>
               <label style={{ fontSize: '0.8rem', fontWeight: '700', color: '#64748b', marginBottom: '6px', display: 'block' }}>Status</label>
-              <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} style={{ width: '100%', padding: '0.7rem', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }}>
+              <select value={formData.status} onChange={e => setFormData({ ...formData, status: e.target.value })} style={{ width: '100%', padding: '0.7rem', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none' }}>
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>
               </select>
@@ -75,9 +72,9 @@ const AlertCodeModal = ({ isOpen, onClose, onSave, alertCode, mode }) => {
           </div>
           <div>
             <label style={{ fontSize: '0.8rem', fontWeight: '700', color: '#64748b', marginBottom: '6px', display: 'block' }}>Description</label>
-            <textarea 
-              value={formData.description} 
-              onChange={e => setFormData({...formData, description: e.target.value})}
+            <textarea
+              value={formData.description}
+              onChange={e => setFormData({ ...formData, description: e.target.value })}
               style={{ width: '100%', padding: '0.7rem', borderRadius: '10px', border: '1px solid #e2e8f0', outline: 'none', minHeight: '80px', resize: 'vertical' }}
               placeholder="Describe the emergency protocol..."
             />
@@ -141,34 +138,34 @@ export default function AlertCodes() {
     }
   };
 
-  const filteredCodes = codes.filter(c => 
+  const filteredCodes = codes.filter(c =>
     c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     c.code.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
     <div style={{ padding: '2rem 0' }}>
-      <AlertCodeModal 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
-        onSave={handleSave} 
-        alertCode={selectedCode} 
-        mode={modalMode} 
+      <AlertCodeModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSave}
+        alertCode={selectedCode}
+        mode={modalMode}
       />
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2.5rem' }}>
         <h1 style={{ margin: 0, fontSize: '1.8rem', fontWeight: '900', color: '#1e293b' }}>Alert Code Management</h1>
         <div style={{ display: 'flex', gap: '1rem' }}>
-          <button 
+          <button
             onClick={fetchCodes}
-            style={{ 
+            style={{
               padding: '0.85rem', backgroundColor: '#f1f5f9', color: '#475569', border: 'none', borderRadius: '12px', cursor: 'pointer',
               display: 'flex', alignItems: 'center', justifyContent: 'center'
             }}
           >
             <RefreshCw size={20} className={loading ? "spin" : ""} />
           </button>
-          <button 
+          <button
             onClick={() => { setModalMode('add'); setSelectedCode(null); setIsModalOpen(true); }}
             style={{ padding: '0.85rem 1.75rem', backgroundColor: '#4c1d95', color: 'white', border: 'none', borderRadius: '12px', fontWeight: '800', fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 4px 12px rgba(76, 29, 149, 0.2)', display: 'flex', alignItems: 'center', gap: '8px' }}
           >
@@ -185,9 +182,9 @@ export default function AlertCodes() {
           </div>
           <div style={{ position: 'relative', width: '350px' }}>
             <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
-            <input 
-              type="text" 
-              placeholder="Search alert codes..." 
+            <input
+              type="text"
+              placeholder="Search alert codes..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
               style={{ width: '100%', padding: '0.7rem 1rem 0.7rem 2.5rem', borderRadius: '12px', border: '1px solid #e2e8f0', backgroundColor: '#f8fafc', outline: 'none', fontSize: '0.9rem' }}
@@ -231,13 +228,13 @@ export default function AlertCodes() {
                   </td>
                   <td style={{ padding: '1.25rem 1rem', borderBottom: '1px solid #f8fafc' }}>
                     <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-                      <button 
+                      <button
                         onClick={() => { setSelectedCode(item); setModalMode('edit'); setIsModalOpen(true); }}
                         style={{ padding: '8px', borderRadius: '10px', border: 'none', backgroundColor: '#f5f3ff', color: '#7c3aed', cursor: 'pointer' }}
                       >
                         <Edit2 size={16} />
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleDelete(item.id)}
                         style={{ padding: '8px', borderRadius: '10px', border: 'none', backgroundColor: '#fff1f2', color: '#e11d48', cursor: 'pointer' }}
                       >
