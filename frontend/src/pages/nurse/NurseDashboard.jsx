@@ -1,10 +1,10 @@
 import React from 'react';
-import Sidebar from '../components/Sidebar';
-import Header from '../components/Header';
-import AlertForm from '../components/AlertForm';
-import AlertCard from '../components/AlertCard';
-import RecentAlertsTable from '../components/RecentAlertsTable';
-import { useAlerts } from '../context/AlertContext';
+import Sidebar from '../../components/Sidebar';
+import Header from '../../components/Header';
+import AlertForm from '../../components/AlertForm';
+import AlertCard from '../../components/AlertCard';
+import RecentAlertsTable from '../../components/RecentAlertsTable';
+import { useAlerts } from '../../context/AlertContext';
 
 const NurseDashboard = () => {
   const { activeAlerts, recentAlerts } = useAlerts();

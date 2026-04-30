@@ -20,7 +20,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/nurse" element={<ProtectedRoute><NurseDashboard /></ProtectedRoute>} />
-            <Route path="/" element={<Navigate to="/" />} />
+            <Route path="/" element={<Navigate to="/register" />} />
           </Routes>
         </Router>
       </AlertProvider>
