@@ -75,3 +75,6 @@ npm run dev
 - **Email**: `[EMAIL_ADDRESS]`
 - **Password**: `[PASSWORD]`
 
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
