@@ -1,0 +1,31 @@
+CREATE TABLE Users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    role ENUM('NURSE', 'DOCTOR', 'EMERGENCY_TEAM', 'ADMIN', 'SYSTEM_MANAGER') NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Alerts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    code_type VARCHAR(50) NOT NULL,
+    floor VARCHAR(50) NOT NULL,
+    ward VARCHAR(50) NOT NULL,
+    room VARCHAR(50) NOT NULL,
+    status ENUM('ACTIVE', 'ACCEPTED', 'IN_PROGRESS', 'RESOLVED') DEFAULT 'ACTIVE',
+    initiator_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    resolved_at TIMESTAMP NULL,
+    FOREIGN KEY (initiator_id) REFERENCES Users(id)
+);
+
+CREATE TABLE Responses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    alert_id INT,
+    responder_id INT,
+    response_status ENUM('ACCEPTED', 'ON_SITE', 'RESOLVED') NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (alert_id) REFERENCES Alerts(id),
+    FOREIGN KEY (responder_id) REFERENCES Users(id)
+);
