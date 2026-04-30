@@ -29,6 +29,11 @@ const UserModel = {
       ]
     );
     return result.insertId;
+  },
+
+  getAll: async () => {
+    const [rows] = await db.execute('SELECT id, name, email, role, staffId, department, status FROM Users');
+    return rows;
   }
 };
 

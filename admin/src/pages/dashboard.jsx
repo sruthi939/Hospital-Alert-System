@@ -309,7 +309,7 @@ export default function Dashboard() {
         <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '16px', border: '1px solid #f1f5f9' }}>
           <h3 style={{ margin: '0 0 1rem 0', fontSize: '1rem', fontWeight: '800', color: '#1e293b' }}>ALERTS OVERVIEW (This Month)</h3>
           <div style={{ display: 'flex', alignItems: 'center', height: '240px' }}>
-            <div style={{ flex: 1, height: '100%' }}>
+            <div style={{ flex: 1, height: '100%', minWidth: 0 }}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie

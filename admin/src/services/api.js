@@ -4,7 +4,7 @@ export const adminService = {
   // Fetch system-wide alerts
   getAllAlerts: async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/recent`);
+      const response = await fetch(`${API_BASE_URL}/alerts/recent`);
       if (!response.ok) throw new Error('Network response was not ok');
       return await response.json();
     } catch (error) {
@@ -30,6 +30,34 @@ export const adminService = {
       return await response.json();
     } catch (error) {
       console.error(`Error updating system alert ${alertId}:`, error);
+      throw error;
+    }
+  },
+
+  // User Management
+  getUsers: async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users`);
+      if (!response.ok) throw new Error('Network response was not ok');
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      throw error;
+    }
+  },
+
+  addUser: async (userData) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+      return await response.json();
+    } catch (error) {
+      console.error("Error adding user:", error);
       throw error;
     }
   }

@@ -1,26 +1,28 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Users, 
-  Building2, 
-  DoorOpen, 
-  Hash, 
-  History, 
-  BarChart3, 
-  Settings, 
-  UserCircle, 
+import {
+  LayoutDashboard, Users, Building2,
+  DoorOpen,
+  Hash,
+  History,
+  BarChart3,
+  Settings,
+  UserCircle,
   LogOut,
   Bell,
   ShieldAlert,
-  Heart
+  Heart,
+  Menu,
+  Search,
+  ChevronDown
 } from 'lucide-react';
 import Dashboard from './pages/dashboard';
+import UsersPage from './pages/users';
 
 const SidebarLink = ({ to, icon: Icon, label }) => {
   const location = useLocation();
   const isActive = location.pathname === to;
-  
+
   return (
     <Link to={to} style={{
       textDecoration: 'none',
@@ -42,16 +44,84 @@ const SidebarLink = ({ to, icon: Icon, label }) => {
   );
 };
 
+const TopBar = () => (
+  <header style={{
+    height: '64px',
+    backgroundColor: 'white',
+    borderBottom: '1px solid #e2e8f0',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    padding: '0 2rem',
+    position: 'sticky',
+    top: 0,
+    zIndex: 40
+  }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', flex: 1 }}>
+      <Menu size={24} style={{ cursor: 'pointer', color: '#64748b' }} />
+      <div style={{ position: 'relative', width: '400px' }}>
+        <Search size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+        <input
+          type="text"
+          placeholder="Search users by name, email, or ID..."
+          style={{
+            width: '100%',
+            padding: '0.6rem 1rem 0.6rem 2.5rem',
+            borderRadius: '8px',
+            border: '1px solid #e2e8f0',
+            backgroundColor: '#f8fafc',
+            fontSize: '0.9rem',
+            outline: 'none'
+          }}
+        />
+      </div>
+    </div>
+
+    <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+      <div style={{ position: 'relative', cursor: 'pointer' }}>
+        <Bell size={22} style={{ color: '#64748b' }} />
+        <span style={{
+          position: 'absolute',
+          top: '-4px',
+          right: '-4px',
+          backgroundColor: '#ef4444',
+          color: 'white',
+          fontSize: '10px',
+          fontWeight: 'bold',
+          width: '16px',
+          height: '16px',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          border: '2px solid white'
+        }}>5</span>
+      </div>
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', paddingLeft: '1.5rem', borderLeft: '1px solid #e2e8f0', cursor: 'pointer' }}>
+        <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#e2e8f0', overflow: 'hidden' }}>
+          <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Admin" alt="Admin" />
+        </div>
+        <div>
+          <div style={{ fontSize: '0.9rem', fontWeight: '700', color: '#1e293b' }}>Admin</div>
+          <div style={{ fontSize: '0.75rem', color: '#64748b' }}>System Administrator</div>
+        </div>
+        <ChevronDown size={16} style={{ color: '#64748b' }} />
+      </div>
+    </div>
+  </header>
+);
+
 function App() {
   return (
     <Router>
       <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f8fafc' }}>
         {/* Sidebar */}
-        <aside style={{ 
-          width: '260px', 
-          backgroundColor: '#4c1d95', 
-          color: 'white', 
-          display: 'flex', 
+        <aside style={{
+          width: '260px',
+          backgroundColor: '#4c1d95',
+          color: 'white',
+          display: 'flex',
           flexDirection: 'column',
           position: 'fixed',
           height: '100vh',
@@ -61,10 +131,10 @@ function App() {
         }}>
           <div style={{ padding: '1.5rem 1.25rem', marginBottom: '1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <div style={{ 
-                backgroundColor: 'white', 
-                padding: '6px', 
-                borderRadius: '10px', 
+              <div style={{
+                backgroundColor: 'white',
+                padding: '6px',
+                borderRadius: '10px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -80,7 +150,7 @@ function App() {
               </div>
             </div>
           </div>
-          
+
           <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <SidebarLink to="/" icon={LayoutDashboard} label="Dashboard" />
             <SidebarLink to="/users" icon={Users} label="Users Management" />
@@ -90,7 +160,7 @@ function App() {
             <SidebarLink to="/history" icon={History} label="Alerts History" />
             <SidebarLink to="/reports" icon={BarChart3} label="Reports & Analytics" />
             <SidebarLink to="/settings" icon={Settings} label="System Settings" />
-            
+
             <div style={{ marginTop: 'auto', marginBottom: '1.5rem' }}>
               <SidebarLink to="/profile" icon={UserCircle} label="Profile" />
               <SidebarLink to="/logout" icon={LogOut} label="Logout" />
@@ -99,16 +169,24 @@ function App() {
         </aside>
 
         {/* Main Content Area */}
-        <main style={{ 
-          flex: 1, 
-          marginLeft: '260px', 
+        <main style={{
+          flex: 1,
+          marginLeft: '260px',
           minHeight: '100vh',
-          padding: '0' 
+          display: 'flex',
+          flexDirection: 'column'
         }}>
+          <TopBar />
           <div style={{ padding: '0 2rem' }}>
             <Routes>
               <Route path="/" element={<Dashboard />} />
-              {/* Other routes can be added here */}
+              <Route path="/users" element={<UsersPage />} />
+              <Route path="*" element={
+                <div style={{ padding: '2rem', textAlign: 'center' }}>
+                  <h2>Page Not Found</h2>
+                  <p>Current Path: {window.location.pathname}</p>
+                </div>
+              } />
             </Routes>
           </div>
         </main>
