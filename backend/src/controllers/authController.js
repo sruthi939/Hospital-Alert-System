@@ -51,3 +51,16 @@ exports.register = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+exports.checkStatus = async (req, res) => {
+  const { email } = req.params;
+  try {
+    const user = await UserModel.findByEmail(email);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    res.json({ success: true, status: user.status });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

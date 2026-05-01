@@ -18,6 +18,7 @@ const Icons = {
 export default function RegisterPage() {
   const navigate = useNavigate();
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState('PENDING');
   const [formData, setFormData] = useState({
     name: '', email: '', phone: '', password: '',
     staffId: '', license_no: ''
@@ -30,6 +31,35 @@ export default function RegisterPage() {
     }
   }, []);
 
+  // POLLING LOGIC: Check for approval automatically
+  useEffect(() => {
+    let interval;
+    if (isSubmitted) {
+      const email = localStorage.getItem('pending_email');
+      if (email) {
+        interval = setInterval(async () => {
+          try {
+            const response = await fetch(`http://localhost:5000/api/auth/status/${email}`);
+            if (response.ok) {
+              const data = await response.json();
+              setCurrentStatus(data.status);
+              if (data.status === 'APPROVED') {
+                setTimeout(() => {
+                  localStorage.removeItem('registration_pending');
+                  localStorage.removeItem('pending_email');
+                  navigate('/login');
+                }, 2000); // Give 2 seconds to see the green check
+              }
+            }
+          } catch (err) {
+            console.error("Polling error:", err);
+          }
+        }, 5000); 
+      }
+    }
+    return () => clearInterval(interval);
+  }, [isSubmitted, navigate]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -40,6 +70,7 @@ export default function RegisterPage() {
       });
       if (response.ok) {
         localStorage.setItem('registration_pending', 'true');
+        localStorage.setItem('pending_email', formData.email);
         setIsSubmitted(true);
       }
     } catch (err) {
@@ -54,9 +85,9 @@ export default function RegisterPage() {
           <h2 style={{ textAlign: 'center', color: '#003399', fontWeight: '800', fontSize: '24px', marginBottom: '50px', letterSpacing: '0.5px' }}>ACCESS REQUEST FLOW</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
             <TimelineStep number="1" icon={<Icons.UserPlus />} title="Nurse Registration" desc="Nurse fills the registration form and submits the request." status="completed" />
-            <TimelineStep number="2" icon={<Icons.Mail />} title="Request Submitted" desc="System stores the request and sends notification to Admin." status="active" />
-            <TimelineStep number="3" icon={<Icons.AdminReview />} title="Admin Review" desc="Admin reviews the details and either approves or rejects." status="pending" />
-            <TimelineStep number="4" icon={<Icons.CheckCircle />} title="Access Granted" desc="Nurse receives approval and can login to the system." status="pending" isLast={true} lastColor="#059669" />
+            <TimelineStep number="2" icon={<Icons.Mail />} title="Request Submitted" desc="System stores the request and sends notification to Admin." status="completed" />
+            <TimelineStep number="3" icon={<Icons.AdminReview />} title="Admin Review" desc="Admin reviews the details and either approves or rejects." status={currentStatus === 'APPROVED' ? 'completed' : 'active'} />
+            <TimelineStep number="4" icon={<Icons.CheckCircle />} title="Access Granted" desc="Nurse receives approval and can login to the system." status={currentStatus === 'APPROVED' ? 'completed' : 'pending'} isLast={true} lastColor="#059669" />
           </div>
         </div>
       </div>
@@ -66,7 +97,7 @@ export default function RegisterPage() {
   return (
     <div style={{ minHeight: '100vh', width: '100vw', backgroundColor: '#f0f4f8', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px', fontFamily: '"Inter", sans-serif' }}>
       <div style={{ width: '100%', maxWidth: '900px', backgroundColor: 'white', borderRadius: '25px', boxShadow: '0 15px 50px rgba(0,0,0,0.05)', overflow: 'hidden' }}>
-        
+
         {/* Header with Navigation */}
         <div style={{ padding: '30px 40px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -99,10 +130,31 @@ export default function RegisterPage() {
                 <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '800', color: '#2563eb', textTransform: 'uppercase' }}>1. Basic Information</h3>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
-                <InputWithIcon label="Full Name" icon={<Icons.User />} placeholder="e.g. SRUTHI ALEX" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} required />
-                <InputWithIcon label="Email Address" icon={<Icons.Mail />} placeholder="e.g. nurse@hospital.com" type="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} required />
-                <InputWithIcon label="Phone Number" icon={<Icons.Phone />} placeholder="e.g. 9876543210" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} required />
-                <InputWithIcon label="Password" icon={<Icons.Lock />} placeholder="Create a secure password" type="password" value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} required />
+                <InputWithIcon label="Full Name" icon={<Icons.User />}
+                  placeholder="Enter your full name"
+                  value={formData.name}
+                  onChange={e => setFormData({ ...formData, name: e.target.value })}
+                  required
+                />
+                <InputWithIcon label="Email Address" icon={<Icons.Mail />}
+                  placeholder="Enter your email address"
+                  type="email"
+                  value={formData.email}
+                  onChange={e => setFormData({ ...formData, email: e.target.value })}
+                  required
+                />
+                <InputWithIcon label="Phone Number" icon={<Icons.Phone />}
+                  placeholder="Enter your phone number"
+                  value={formData.phone}
+                  onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                  required
+                />
+                <InputWithIcon label="Password" icon={<Icons.Lock />}
+                  placeholder="Enter your password"
+                  type="password" value={formData.password}
+                  onChange={e => setFormData({ ...formData, password: e.target.value })}
+                  required
+                />
               </div>
             </section>
 
@@ -112,8 +164,18 @@ export default function RegisterPage() {
                 <h3 style={{ margin: 0, fontSize: '16px', fontWeight: '800', color: '#2563eb', textTransform: 'uppercase' }}>2. Professional Verification</h3>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px' }}>
-                <InputWithIcon label="Employee ID" icon={<Icons.IdCard />} placeholder="Enter Employee ID" value={formData.staffId} onChange={e => setFormData({ ...formData, staffId: e.target.value })} required />
-                <InputWithIcon label="License Number" icon={<Icons.Badge />} placeholder="Enter Medical License No." value={formData.license_no} onChange={e => setFormData({ ...formData, license_no: e.target.value })} required />
+                <InputWithIcon label="Employee ID" icon={<Icons.IdCard />}
+                  placeholder="Enter Employee ID"
+                  value={formData.staffId}
+                  onChange={e => setFormData({ ...formData, staffId: e.target.value })}
+                  required
+                />
+                <InputWithIcon label="License Number" icon={<Icons.Badge />}
+                  placeholder="Enter Medical License No."
+                  value={formData.license_no}
+                  onChange={e => setFormData({ ...formData, license_no: e.target.value })}
+                  required
+                />
               </div>
             </section>
 
@@ -150,14 +212,14 @@ const TimelineStep = ({ number, icon, title, desc, status, isLast }) => {
   const isCompleted = status === 'completed';
   const isActive = status === 'active';
   const textColor = isCompleted || isActive ? '#003399' : '#94a3b8';
-  
+
   return (
     <div style={{ display: 'flex', gap: '30px', position: 'relative', paddingBottom: isLast ? '0' : '40px' }}>
       {!isLast && (
         <div style={{ position: 'absolute', left: '16px', top: '35px', bottom: '0', width: '2px', borderLeft: '2px dashed #e2e8f0' }}></div>
       )}
       <div style={{
-        width: '34px', height: '34px', borderRadius: '50%', 
+        width: '34px', height: '34px', borderRadius: '50%',
         backgroundColor: number === "4" && isCompleted ? "#059669" : (status === "pending" ? "#e2e8f0" : "#2563eb"),
         color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '800', fontSize: '14px', zIndex: 2
       }}>{number}</div>
