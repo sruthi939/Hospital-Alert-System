@@ -16,7 +16,7 @@ const NurseDashboard = () => {
 
   React.useEffect(() => {
     if (activeTab === 'Patients') {
-      fetch('http://localhost:5000/api/patients')
+      fetch('http://localhost:5001/api/patients')
         .then(res => res.json())
         .then(setPatients)
         .catch(err => console.error(err));
