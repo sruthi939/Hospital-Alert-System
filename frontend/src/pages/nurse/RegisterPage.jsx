@@ -23,6 +23,8 @@ export default function RegisterPage() {
     name: '', email: '', phone: '', password: '',
     staffId: '', license_no: ''
   });
+  const [recoveryEmail, setRecoveryEmail] = useState('');
+  const [isEmailMissing, setIsEmailMissing] = useState(!localStorage.getItem('pending_email') && isSubmitted);
 
 
   // POLLING LOGIC: Check for approval automatically
@@ -55,6 +57,49 @@ export default function RegisterPage() {
     return () => clearInterval(interval);
   }, [isSubmitted, navigate]);
 
+  const manualCheckStatus = async () => {
+    const email = localStorage.getItem('pending_email') || recoveryEmail;
+    if (!email) {
+      alert("Please enter your registered email address.");
+      return;
+    }
+    try {
+      const response = await fetch(`http://localhost:5000/api/auth/status/${email.trim()}`);
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentStatus(data.status);
+        const status = (data.status || '').toUpperCase();
+        
+        // If we found them, save the email for next time
+        if (data.success) {
+          localStorage.setItem('pending_email', email.trim());
+          localStorage.setItem('registration_pending', 'true');
+          setIsEmailMissing(false);
+        }
+
+        if (status === 'APPROVED' || status === 'ACTIVE') {
+          localStorage.removeItem('registration_pending');
+          localStorage.removeItem('pending_email');
+          navigate('/login');
+        } else if (recoveryEmail) {
+          alert("Account found! Status: PENDING. We will notify you once approved.");
+        }
+      } else {
+        alert("Email not found. Please check the spelling or register again.");
+      }
+    } catch (err) {
+      alert("Unable to reach the server.");
+    }
+  };
+
+  const resetRegistration = () => {
+    if (window.confirm("Are you sure you want to cancel this request and register again?")) {
+      localStorage.removeItem('registration_pending');
+      localStorage.removeItem('pending_email');
+      setIsSubmitted(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -83,6 +128,38 @@ export default function RegisterPage() {
             <TimelineStep number="2" icon={<Icons.Mail />} title="Request Submitted" desc="System stores the request and sends notification to Admin." status="completed" />
             <TimelineStep number="3" icon={<Icons.AdminReview />} title="Admin Review" desc="Admin reviews the details and either approves or rejects." status={(currentStatus || '').toUpperCase() === 'ACTIVE' || (currentStatus || '').toUpperCase() === 'APPROVED' ? 'completed' : 'active'} />
             <TimelineStep number="4" icon={<Icons.CheckCircle />} title="Access Granted" desc="Nurse receives approval and can login to the system." status={(currentStatus || '').toUpperCase() === 'ACTIVE' || (currentStatus || '').toUpperCase() === 'APPROVED' ? 'completed' : 'pending'} isLast={true} lastColor="#059669" />
+          </div>
+
+          <div style={{ marginTop: '50px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '15px' }}>
+            {isEmailMissing ? (
+              <div style={{ width: '100%', maxWidth: '400px', backgroundColor: '#f8fafc', padding: '20px', borderRadius: '15px', border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                <p style={{ margin: '0 0 15px 0', fontSize: '14px', color: '#475569', fontWeight: '600' }}>Confirm your registered email to track status:</p>
+                <input 
+                  type="email" 
+                  placeholder="Enter your email" 
+                  value={recoveryEmail} 
+                  onChange={e => setRecoveryEmail(e.target.value)}
+                  style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', marginBottom: '15px', outline: 'none' }}
+                />
+                <button 
+                  onClick={manualCheckStatus}
+                  style={{ width: '100%', padding: '12px', backgroundColor: '#2563eb', color: 'white', border: 'none', borderRadius: '8px', fontWeight: '700', cursor: 'pointer' }}
+                >
+                  Verify & Connect
+                </button>
+              </div>
+            ) : (
+              <button 
+                onClick={manualCheckStatus}
+                style={{ padding: '12px 30px', backgroundColor: '#003366', color: 'white', border: 'none', borderRadius: '10px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+              >
+                <Icons.ArrowLeft /> Refresh Status
+              </button>
+            )}
+            
+            <p style={{ fontSize: '13px', color: '#64748b' }}>
+              Already approved? <span onClick={resetRegistration} style={{ color: '#2563eb', fontWeight: '700', cursor: 'pointer', textDecoration: 'underline' }}>Register again with new details</span>
+            </p>
           </div>
         </div>
       </div>

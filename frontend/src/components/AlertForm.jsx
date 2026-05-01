@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { alertService } from '../services/alertService';
+import { useAuth } from '../context/AuthContext';
 
 const AlertForm = ({ onAlertTriggered }) => {
+  const { user } = useAuth();
   const [selectedCode, setSelectedCode] = useState('CODE BLUE');
   const [location, setLocation] = useState({ floor: '', wardId: '', room: '' });
   const [notes, setNotes] = useState('');
@@ -41,7 +43,8 @@ const AlertForm = ({ onAlertTriggered }) => {
         floor: location.floor || 'G Floor',
         ward: selectedWard?.name || 'Unknown',
         room: location.room,
-        notes
+        notes,
+        triggered_by: user?.name || 'Unknown Nurse'
       };
       await alertService.triggerAlert(alertData);
       if (onAlertTriggered) onAlertTriggered();
