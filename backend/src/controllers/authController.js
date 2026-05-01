@@ -11,7 +11,8 @@ exports.login = async (req, res) => {
     }
 
     // SECURITY CHECK: Ensure account is approved
-    if (user.status !== 'APPROVED') {
+    const status = (user.status || '').toUpperCase();
+    if (status !== 'APPROVED' && status !== 'ACTIVE') {
       return res.status(403).json({ 
         success: false, 
         message: 'Your account is pending admin approval. Please contact your supervisor.' 

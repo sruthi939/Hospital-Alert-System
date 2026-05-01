@@ -17,19 +17,13 @@ const Icons = {
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(localStorage.getItem('registration_pending') === 'true');
   const [currentStatus, setCurrentStatus] = useState('PENDING');
   const [formData, setFormData] = useState({
     name: '', email: '', phone: '', password: '',
     staffId: '', license_no: ''
   });
 
-  useEffect(() => {
-    const isPending = localStorage.getItem('registration_pending');
-    if (isPending === 'true') {
-      setIsSubmitted(true);
-    }
-  }, []);
 
   // POLLING LOGIC: Check for approval automatically
   useEffect(() => {
@@ -43,7 +37,8 @@ export default function RegisterPage() {
             if (response.ok) {
               const data = await response.json();
               setCurrentStatus(data.status);
-              if (data.status === 'APPROVED') {
+              const status = (data.status || '').toUpperCase();
+              if (status === 'APPROVED' || status === 'ACTIVE') {
                 setTimeout(() => {
                   localStorage.removeItem('registration_pending');
                   localStorage.removeItem('pending_email');
@@ -86,8 +81,8 @@ export default function RegisterPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
             <TimelineStep number="1" icon={<Icons.UserPlus />} title="Nurse Registration" desc="Nurse fills the registration form and submits the request." status="completed" />
             <TimelineStep number="2" icon={<Icons.Mail />} title="Request Submitted" desc="System stores the request and sends notification to Admin." status="completed" />
-            <TimelineStep number="3" icon={<Icons.AdminReview />} title="Admin Review" desc="Admin reviews the details and either approves or rejects." status={currentStatus === 'APPROVED' ? 'completed' : 'active'} />
-            <TimelineStep number="4" icon={<Icons.CheckCircle />} title="Access Granted" desc="Nurse receives approval and can login to the system." status={currentStatus === 'APPROVED' ? 'completed' : 'pending'} isLast={true} lastColor="#059669" />
+            <TimelineStep number="3" icon={<Icons.AdminReview />} title="Admin Review" desc="Admin reviews the details and either approves or rejects." status={(currentStatus || '').toUpperCase() === 'ACTIVE' || (currentStatus || '').toUpperCase() === 'APPROVED' ? 'completed' : 'active'} />
+            <TimelineStep number="4" icon={<Icons.CheckCircle />} title="Access Granted" desc="Nurse receives approval and can login to the system." status={(currentStatus || '').toUpperCase() === 'ACTIVE' || (currentStatus || '').toUpperCase() === 'APPROVED' ? 'completed' : 'pending'} isLast={true} lastColor="#059669" />
           </div>
         </div>
       </div>
