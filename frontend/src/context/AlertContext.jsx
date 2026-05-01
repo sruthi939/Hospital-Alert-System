@@ -9,7 +9,7 @@ export const AlertProvider = ({ children }) => {
   const [recentAlerts, setRecentAlerts] = useState([]);
 
   useEffect(() => {
-    const socket = io('http://localhost:5000');
+    const socket = io('http://localhost:5001');
 
     socket.on('new_alert', (newAlert) => {
       setActiveAlerts(prev => [newAlert, ...prev]);

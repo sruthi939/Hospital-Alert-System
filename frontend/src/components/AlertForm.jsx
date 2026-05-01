@@ -13,7 +13,7 @@ const AlertForm = ({ onAlertTriggered }) => {
   useEffect(() => {
     const fetchMetadata = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/wards');
+        const response = await fetch('http://localhost:5001/api/wards');
         if (response.ok) {
           const data = await response.json();
           setWards(data);
