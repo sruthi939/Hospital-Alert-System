@@ -17,7 +17,12 @@ const LoginPage = () => {
       login(data.user);
       navigate('/nurse');
     } catch (err) {
-      setError(err.message);
+      if (err.message.includes('pending admin approval')) {
+        localStorage.setItem('registration_pending', 'true');
+        navigate('/register');
+      } else {
+        setError(err.message);
+      }
     }
   };
 

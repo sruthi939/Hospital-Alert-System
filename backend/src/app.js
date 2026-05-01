@@ -11,6 +11,7 @@ const departmentRoutes = require('./routes/departmentRoutes');
 const wardRoutes = require('./routes/wardRoutes');
 const alertCodeRoutes = require('./routes/alertCodeRoutes');
 const settingsRoutes = require('./routes/settingsRoutes');
+const patientRoutes = require('./routes/patientRoutes');
 const alertSocket = require('./sockets/alertSocket');
 
 const app = express();
@@ -41,6 +42,7 @@ apiRouter.use('/departments', departmentRoutes);
 apiRouter.use('/wards', wardRoutes);
 apiRouter.use('/codes', alertCodeRoutes);
 apiRouter.use('/settings', settingsRoutes);
+apiRouter.use('/patients', patientRoutes);
 app.use('/api', apiRouter);
 
 // Fallback 404 handler

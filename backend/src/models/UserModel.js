@@ -3,7 +3,8 @@ const bcrypt = require('bcryptjs');
 
 const UserModel = {
   findByEmail: async (email) => {
-    const [rows] = await db.execute('SELECT * FROM Users WHERE email = ?', [email]);
+    const sanitizedEmail = (email || '').trim().toLowerCase();
+    const [rows] = await db.execute('SELECT * FROM Users WHERE email = ?', [sanitizedEmail]);
     return rows[0];
   },
 
@@ -14,6 +15,8 @@ const UserModel = {
       status 
     } = userData;
     
+    const sanitizedEmail = (email || '').trim().toLowerCase();
+    
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     
@@ -22,7 +25,7 @@ const UserModel = {
       (name, email, password_hash, role, staffId, phone, dob, gender, address, department, designation, shift, experience, license_no, status) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
-        name, email, hashedPassword, role || 'NURSE', staffId, 
+        name, sanitizedEmail, hashedPassword, role || 'NURSE', staffId, 
         phone || null, dob || null, gender || null, address || null, 
         department || null, designation || null, shift || null, 
         experience || null, license_no || null, status || 'PENDING'
