@@ -78,3 +78,7 @@ npm run dev
 ## 📄 License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## Author
+Sruthi Alex (UI/UX Designer)
+https://www.linkedin.com/in/sruthi-alex-b7784b37a
+
