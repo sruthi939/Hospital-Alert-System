@@ -1,3 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+  --color-hospital-dark: #0A432F;
+  --color-hospital-light: #0D8F4F;
+  --color-hospital-bg: #f8f9fa;
+  --color-hospital-panel: #f0f4f8;
+  --color-hospital-border: #eaedf0;
+}
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 body {
@@ -7,20 +17,19 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #f3f4f6;
+  background-color: #f8f9fa;
   color: #111827;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
 * {
   box-sizing: border-box;
 }
 
-/* Custom Scrollbar for better aesthetics */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }

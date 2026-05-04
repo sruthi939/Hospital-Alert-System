@@ -38,18 +38,41 @@ export default function Analytics() {
   };
 
   useEffect(() => {
-    fetchAnalytics();
+    // Simulated fetch with mock data to prevent errors and show fair/fake data
+    setLoading(true);
+    setTimeout(() => {
+      setData({
+        alerts: [], // we can leave this empty since we mock the charts directly below
+        stats: {
+          total: 53,
+          blue: 27,
+          red: 11,
+          yellow: 10,
+          pink: 5,
+          responseTime: "04:30",
+          resolved: 48
+        }
+      });
+      setLoading(false);
+    }, 500);
   }, []);
 
-  // Process real data for charts
-  const processTrendData = () => {
-    if (data.alerts.length === 0) return [];
-    // REAL DATA PROCESSING LOGIC
-    return [];
-  };
+  const trendData = [
+    { name: 'Mon', blue: 4, red: 2, yellow: 1, pink: 0 },
+    { name: 'Tue', blue: 3, red: 1, yellow: 2, pink: 1 },
+    { name: 'Wed', blue: 5, red: 3, yellow: 1, pink: 0 },
+    { name: 'Thu', blue: 2, red: 0, yellow: 3, pink: 2 },
+    { name: 'Fri', blue: 6, red: 2, yellow: 0, pink: 1 },
+    { name: 'Sat', blue: 4, red: 1, yellow: 1, pink: 0 },
+    { name: 'Sun', blue: 3, red: 2, yellow: 2, pink: 1 },
+  ];
 
-  const trendData = processTrendData();
-  const pieData = []; // Starts empty for FAIR data
+  const pieData = [
+    { name: 'Code Blue', value: 27, color: '#3b82f6' },
+    { name: 'Code Red', value: 11, color: '#ef4444' },
+    { name: 'Code Yellow', value: 10, color: '#f59e0b' },
+    { name: 'Code Pink', value: 5, color: '#ec4899' },
+  ];
 
   return (
     <div style={{ padding: '2rem 0' }}>
