@@ -32,43 +32,43 @@ const NurseDashboard = () => {
     switch (activeTab) {
       case 'History':
         return (
-          <div style={{ backgroundColor: 'white', padding: '30px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
-            <h3 style={{ marginTop: 0, marginBottom: '20px', color: '#001a3d' }}>Alert History</h3>
+          <div className="bg-white p-[30px] rounded-[20px] border border-[#e2e8f0]">
+            <h3 className="m-0 mb-[20px] text-[#001a3d]">Alert History</h3>
             <RecentAlertsTable alerts={recentAlerts} />
           </div>
         );
       case 'Patients':
         return (
-          <div style={{ backgroundColor: 'white', padding: '30px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
-            <h3 style={{ marginTop: 0, marginBottom: '20px', color: '#001a3d' }}>Patient Directory</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+          <div className="bg-white p-[30px] rounded-[20px] border border-[#e2e8f0]">
+            <h3 className="m-0 mb-[20px] text-[#001a3d]">Patient Directory</h3>
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-[20px]">
               {Array.isArray(patients) && patients.length > 0 ? patients.map(p => (
-                <div key={p.id} style={{ padding: '20px', border: '1px solid #f1f5f9', borderRadius: '15px', backgroundColor: '#f8fafc' }}>
-                  <div style={{ fontWeight: '800', color: '#1e293b', fontSize: '16px', marginBottom: '5px' }}>{p.name}</div>
-                  <div style={{ fontSize: '13px', color: '#64748b' }}>Age: {p.age} | Room: <span style={{ fontWeight: '700', color: '#3b82f6' }}>{p.room}</span></div>
-                  <div style={{ marginTop: '10px', fontSize: '13px', color: '#475569' }}>{p.condition_summary}</div>
+                <div key={p.id} className="p-[20px] border border-[#f1f5f9] rounded-[15px] bg-[#f8fafc]">
+                  <div className="font-[800] text-[#1e293b] text-[16px] mb-[5px]">{p.name}</div>
+                  <div className="text-[13px] text-[#64748b]">Age: {p.age} | Room: <span className="font-[700] text-[#3b82f6]">{p.room}</span></div>
+                  <div className="mt-[10px] text-[13px] text-[#475569]">{p.condition_summary}</div>
                 </div>
               )) : (
-                <div style={{ color: '#64748b', fontSize: '14px' }}>No patients found or error loading data.</div>
+                <div className="text-[#64748b] text-[14px]">No patients found or error loading data.</div>
               )}
             </div>
           </div>
         );
       default:
         return (
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '30px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '30px' }}>
+          <div className="grid grid-cols-[1fr_380px] gap-[30px]">
+            <div className="flex flex-col gap-[30px]">
               <AlertForm onAlertTriggered={() => setActiveTab('Dashboard')} />
               <RecentAlertsTable alerts={recentAlerts.slice(0, 5)} />
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-                <div style={{ width: '8px', height: '8px', backgroundColor: '#ef4444', borderRadius: '50%', animation: 'pulse 2s infinite' }}></div>
-                <h3 style={{ margin: 0, fontSize: '15px', fontWeight: '800', color: '#1e293b', textTransform: 'uppercase' }}>Active Alerts</h3>
+            <div className="flex flex-col gap-[20px]">
+              <div className="flex items-center gap-[10px] mb-[10px]">
+                <div className="w-[8px] h-[8px] bg-[#ef4444] rounded-full animate-[pulse_2s_infinite]"></div>
+                <h3 className="m-0 text-[15px] font-[800] text-[#1e293b] uppercase">Active Alerts</h3>
               </div>
               {activeAlerts.length === 0 ? (
-                <div style={{ padding: '40px', textAlign: 'center', backgroundColor: 'white', borderRadius: '20px', border: '1px solid #e2e8f0', color: '#64748b', fontSize: '14px' }}>
-                  <img src="https://img.icons8.com/color/48/checked-checkbox.png" alt="no alerts" style={{ width: '40px', opacity: 0.3, marginBottom: '15px' }} />
+                <div className="p-[40px] text-center bg-white rounded-[20px] border border-[#e2e8f0] text-[#64748b] text-[14px]">
+                  <img src="https://img.icons8.com/color/48/checked-checkbox.png" alt="no alerts" className="w-[40px] opacity-30 mb-[15px] inline-block" />
                   <div>All clear. No active alerts.</div>
                 </div>
               ) : (
@@ -83,29 +83,30 @@ const NurseDashboard = () => {
   };
 
   return (
-    <div style={{ backgroundColor: '#f0f4f8', minHeight: '100vh', fontFamily: '"Inter", sans-serif' }}>
-      <nav style={{ backgroundColor: '#001a3d', padding: '15px 40px', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center', boxShadow: '0 4px 15px rgba(0,0,0,0.1)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ backgroundColor: 'white', borderRadius: '8px', padding: '6px' }}><img src="https://img.icons8.com/color/48/hospital.png" alt="logo" style={{ width: '24px' }} /></div>
-          <div><div style={{ fontWeight: '800', fontSize: '15px', letterSpacing: '0.5px' }}>HOSPITAL</div><div style={{ fontSize: '10px', opacity: 0.7 }}>Emergency Alert System</div></div>
+    <div className="bg-[#f0f4f8] min-h-screen font-sans">
+      <nav className="bg-[#001a3d] px-[40px] py-[15px] text-white flex justify-between items-center shadow-[0_4px_15px_rgba(0,0,0,0.1)]">
+        <div className="flex items-center gap-[12px]">
+          <div className="bg-white rounded-[8px] p-[6px]"><img src="https://img.icons8.com/color/48/hospital.png" alt="logo" className="w-[24px]" /></div>
+          <div><div className="font-[800] text-[15px] tracking-[0.5px]">HOSPITAL</div><div className="text-[10px] opacity-70">Emergency Alert System</div></div>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '25px' }}>
-          <div style={{ display: 'flex', gap: '20px', fontSize: '14px', fontWeight: '600' }}>
+        <div className="flex items-center gap-[25px]">
+          <div className="flex gap-[20px] text-[14px] font-[600]">
             {['Dashboard', 'History', 'Patients'].map(tab => (
               <span 
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                style={{ borderBottom: activeTab === tab ? '2px solid #3b82f6' : 'none', opacity: activeTab === tab ? 1 : 0.7, paddingBottom: '4px', cursor: 'pointer', transition: 'all 0.2s' }}
+                style={{ borderBottom: activeTab === tab ? '2px solid #3b82f6' : 'none', opacity: activeTab === tab ? 1 : 0.7 }}
+                className="pb-[4px] cursor-pointer transition-all duration-200"
               >
                 {tab}
               </span>
             ))}
           </div>
-          <button onClick={handleLogout} style={{ backgroundColor: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', color: 'white', padding: '8px 18px', borderRadius: '8px', fontSize: '13px', fontWeight: '700', cursor: 'pointer' }}>Logout</button>
+          <button onClick={handleLogout} className="bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.2)] text-white px-[18px] py-[8px] rounded-[8px] text-[13px] font-[700] cursor-pointer">Logout</button>
         </div>
       </nav>
 
-      <main style={{ maxWidth: '1400px', margin: '0 auto', padding: '30px 40px', display: 'flex', flexDirection: 'column', gap: '30px' }}>
+      <main className="max-w-[1400px] mx-auto px-[40px] py-[30px] flex flex-col gap-[30px]">
         <Header user={user} />
         {renderContent()}
       </main>

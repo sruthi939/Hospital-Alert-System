@@ -57,14 +57,14 @@ const AlertForm = ({ onAlertTriggered }) => {
   };
 
   return (
-    <div style={{ backgroundColor: 'white', borderRadius: '20px', padding: '30px', boxShadow: '0 4px 20px rgba(0,0,0,0.04)', border: '1px solid #f1f5f9' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '25px' }}>
-        <div style={{ width: '4px', height: '18px', backgroundColor: '#3b82f6', borderRadius: '2px' }}></div>
-        <h3 style={{ margin: 0, fontSize: '15px', fontWeight: '800', color: '#1e293b' }}>TRIGGER EMERGENCY ALERT</h3>
+    <div className="bg-white rounded-[20px] p-[30px] shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-[#f1f5f9]">
+      <div className="flex items-center gap-[10px] mb-[25px]">
+        <div className="w-[4px] h-[18px] bg-[#3b82f6] rounded-[2px]"></div>
+        <h3 className="m-0 text-[15px] font-[800] text-[#1e293b]">TRIGGER EMERGENCY ALERT</h3>
       </div>
       
       {/* Code Selection */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px', marginBottom: '30px' }}>
+      <div className="grid grid-cols-4 gap-[12px] mb-[30px]">
         {[
           { code: 'CODE BLUE', color: '#0052cc' },
           { code: 'CODE RED', color: '#d73a49' },
@@ -75,22 +75,22 @@ const AlertForm = ({ onAlertTriggered }) => {
             key={item.code}
             onClick={() => setSelectedCode(item.code)}
             style={{ 
-              padding: '16px 10px', borderRadius: '12px', border: selectedCode === item.code ? `3px solid ${item.color}` : '1px solid transparent', 
-              color: 'white', fontWeight: '800', backgroundColor: item.color, fontSize: '11px', cursor: 'pointer',
+              border: selectedCode === item.code ? `3px solid ${item.color}` : '1px solid transparent', 
+              backgroundColor: item.color,
               boxShadow: selectedCode === item.code ? `0 8px 20px ${item.color}40` : 'none',
-              transform: selectedCode === item.code ? 'translateY(-2px)' : 'none',
-              transition: 'all 0.2s ease'
+              transform: selectedCode === item.code ? 'translateY(-2px)' : 'none'
             }}
+            className="p-[16px_10px] rounded-[12px] text-white font-[800] text-[11px] cursor-pointer transition-all duration-200 ease-in-out"
           >
             {item.code}
           </button>
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginBottom: '25px' }}>
+      <div className="grid grid-cols-3 gap-[20px] mb-[25px]">
         <div>
-          <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#64748b', marginBottom: '8px' }}>FLOOR</label>
-          <select value={location.floor} onChange={e => setLocation({...location, floor: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', backgroundColor: '#f8fafc', fontWeight: '600' }}>
+          <label className="block text-[12px] font-[800] text-[#64748b] mb-[8px]">FLOOR</label>
+          <select value={location.floor} onChange={e => setLocation({...location, floor: e.target.value})} className="w-full p-[12px] rounded-[10px] border border-[#e2e8f0] bg-[#f8fafc] font-[600]">
             <option value="">Select Floor</option>
             <option>Ground Floor</option>
             <option>1st Floor</option>
@@ -99,28 +99,28 @@ const AlertForm = ({ onAlertTriggered }) => {
           </select>
         </div>
         <div>
-          <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#64748b', marginBottom: '8px' }}>WARD</label>
-          <select value={location.wardId} onChange={e => setLocation({...location, wardId: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', backgroundColor: '#f8fafc', fontWeight: '600' }}>
+          <label className="block text-[12px] font-[800] text-[#64748b] mb-[8px]">WARD</label>
+          <select value={location.wardId} onChange={e => setLocation({...location, wardId: e.target.value})} className="w-full p-[12px] rounded-[10px] border border-[#e2e8f0] bg-[#f8fafc] font-[600]">
             {wards.length === 0 ? <option>No Wards Found</option> : wards.map(w => <option key={w.id} value={w.id}>{w.name}</option>)}
           </select>
         </div>
         <div>
-          <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#64748b', marginBottom: '8px' }}>ROOM NO</label>
-          <input type="text" placeholder="e.g. 205" value={location.room} onChange={e => setLocation({...location, room: e.target.value})} style={{ width: '100%', padding: '12px', borderRadius: '10px', border: '1px solid #e2e8f0', backgroundColor: '#f8fafc', fontWeight: '600' }} />
+          <label className="block text-[12px] font-[800] text-[#64748b] mb-[8px]">ROOM NO</label>
+          <input type="text" placeholder="e.g. 205" value={location.room} onChange={e => setLocation({...location, room: e.target.value})} className="w-full p-[12px] rounded-[10px] border border-[#e2e8f0] bg-[#f8fafc] font-[600]" />
         </div>
       </div>
 
-      <div style={{ marginBottom: '30px' }}>
-        <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#64748b', marginBottom: '8px' }}>SITUATION NOTES</label>
+      <div className="mb-[30px]">
+        <label className="block text-[12px] font-[800] text-[#64748b] mb-[8px]">SITUATION NOTES</label>
         <textarea 
           placeholder="Briefly describe the situation..." 
           value={notes} 
           onChange={e => setNotes(e.target.value)}
-          style={{ width: '100%', padding: '15px', borderRadius: '12px', border: '1px solid #e2e8f0', backgroundColor: '#f8fafc', height: '100px', resize: 'none', fontWeight: '500' }}
+          className="w-full p-[15px] rounded-[12px] border border-[#e2e8f0] bg-[#f8fafc] h-[100px] resize-none font-[500]"
         />
       </div>
 
-      <button onClick={handleTrigger} style={{ width: '100%', padding: '20px', backgroundColor: '#001a3d', color: 'white', border: 'none', borderRadius: '15px', fontWeight: '800', fontSize: '16px', cursor: 'pointer', transition: 'all 0.2s ease', boxShadow: '0 4px 15px rgba(0,26,61,0.2)' }}>
+      <button onClick={handleTrigger} className="w-full p-[20px] bg-[#001a3d] text-white border-none rounded-[15px] font-[800] text-[16px] cursor-pointer transition-all duration-200 ease-in-out shadow-[0_4px_15px_rgba(0,26,61,0.2)]">
         SEND EMERGENCY SIGNAL
       </button>
     </div>
