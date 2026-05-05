@@ -6,6 +6,11 @@ require('dotenv').config();
 
 const alertRoutes = require('./routes/alertRoutes');
 const authRoutes = require('./routes/authRoutes');
+const connectDB = require('./config/db');
+
+// Connect to MongoDB
+connectDB();
+
 const userRoutes = require('./routes/userRoutes');
 const departmentRoutes = require('./routes/departmentRoutes');
 const wardRoutes = require('./routes/wardRoutes');

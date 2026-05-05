@@ -1,24 +1,34 @@
-const db = require('../config/db');
+const mongoose = require('mongoose');
+
+const alertSchema = new mongoose.Schema({
+  code_type: { type: String, required: true },
+  floor: { type: String, required: true },
+  ward: { type: String, required: true },
+  room: { type: String, required: true },
+  notes: String,
+  status: { type: String, enum: ['ACTIVE', 'ACCEPTED', 'IN_PROGRESS', 'RESOLVED'], default: 'ACTIVE' },
+  initiator_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  resolved_at: Date
+}, { timestamps: { createdAt: 'created_at', updatedAt: false } });
+
+alertSchema.virtual('id').get(function(){ return this._id.toHexString(); });
+alertSchema.set('toJSON', { virtuals: true });
+
+const Alert = mongoose.model('Alert', alertSchema);
 
 const AlertModel = {
   create: async (alertData) => {
-    const { code_type, floor, ward, room, notes, initiator_id } = alertData;
-    const [result] = await db.execute(
-      'INSERT INTO Alerts (code_type, floor, ward, room, notes, initiator_id) VALUES (?, ?, ?, ?, ?, ?)',
-      [code_type, floor, ward, room, notes, initiator_id || null]
-    );
-    return result.insertId;
+    // Some controllers might pass initiator_id as a string, check if it's empty
+    if(alertData.initiator_id === '') delete alertData.initiator_id;
+    const newAlert = new Alert(alertData);
+    const savedAlert = await newAlert.save();
+    return savedAlert._id;
   },
-
   getRecent: async () => {
-    const [rows] = await db.execute(
-      'SELECT * FROM Alerts ORDER BY created_at DESC LIMIT 10'
-    );
-    return rows;
+    return await Alert.find().sort({ created_at: -1 }).limit(10);
   },
-
   updateStatus: async (alertId, status) => {
-    await db.execute('UPDATE Alerts SET status = ? WHERE id = ?', [status, alertId]);
+    await Alert.findByIdAndUpdate(alertId, { status });
   }
 };
 

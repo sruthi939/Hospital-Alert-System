@@ -1,54 +1,59 @@
-const db = require('../config/db');
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password_hash: { type: String, required: true },
+  role: { type: String, enum: ['NURSE', 'DOCTOR', 'ADMIN'], default: 'NURSE' },
+  staffId: { type: String, unique: true },
+  phone: String,
+  dob: Date,
+  gender: String,
+  address: String,
+  department: String,
+  designation: String,
+  shift: String,
+  experience: String,
+  license_no: String,
+  status: { type: String, enum: ['PENDING', 'APPROVED', 'REJECTED'], default: 'PENDING' }
+}, { timestamps: { createdAt: 'created_at', updatedAt: false } });
+
+// ensure virtuals map to 'id' for compatibility with old controllers
+userSchema.virtual('id').get(function(){
+  return this._id.toHexString();
+});
+userSchema.set('toJSON', { virtuals: true });
+
+const User = mongoose.model('User', userSchema);
 
 const UserModel = {
   findByEmail: async (email) => {
     const sanitizedEmail = (email || '').trim().toLowerCase();
-    const [rows] = await db.execute('SELECT * FROM Users WHERE email = ?', [sanitizedEmail]);
-    return rows[0];
+    return await User.findOne({ email: sanitizedEmail });
   },
-
   create: async (userData) => {
-    const { 
-      name, email, password, role, staffId, 
-      phone, dob, gender, address, department, designation, shift, experience, license_no,
-      status 
-    } = userData;
-    
+    const { password, email, ...rest } = userData;
     const sanitizedEmail = (email || '').trim().toLowerCase();
-    
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
     
-    const [result] = await db.execute(
-      `INSERT INTO Users 
-      (name, email, password_hash, role, staffId, phone, dob, gender, address, department, designation, shift, experience, license_no, status) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        name, sanitizedEmail, hashedPassword, role || 'NURSE', staffId, 
-        phone || null, dob || null, gender || null, address || null, 
-        department || null, designation || null, shift || null, 
-        experience || null, license_no || null, status || 'PENDING'
-      ]
-    );
-    return result.insertId;
+    const newUser = new User({
+      ...rest,
+      email: sanitizedEmail,
+      password_hash: hashedPassword
+    });
+    const savedUser = await newUser.save();
+    return savedUser._id;
   },
-
   getAll: async () => {
-    const [rows] = await db.execute('SELECT id, name, email, role, staffId, department, status, phone FROM Users');
-    return rows;
+    return await User.find({}, 'id name email role staffId department status phone');
   },
-
   update: async (id, userData) => {
-    const { name, email, role, staffId, department, status, phone } = userData;
-    await db.execute(
-      'UPDATE Users SET name = ?, email = ?, role = ?, staffId = ?, department = ?, status = ?, phone = ? WHERE id = ?',
-      [name, email, role, staffId, department, status, phone || null, id]
-    );
+    await User.findByIdAndUpdate(id, userData);
   },
-
   delete: async (id) => {
-    await db.execute('DELETE FROM Users WHERE id = ?', [id]);
+    await User.findByIdAndDelete(id);
   }
 };
 

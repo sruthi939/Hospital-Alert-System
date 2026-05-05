@@ -1,24 +1,31 @@
-const db = require('../config/db');
+const mongoose = require('mongoose');
+
+const settingsSchema = new mongoose.Schema({
+  hospital_name: String,
+  address: String,
+  timezone: String,
+  date_format: String,
+  time_format: String,
+  language: String
+});
+
+const Settings = mongoose.model('Settings', settingsSchema);
 
 const SettingsModel = {
   get: async () => {
-    const [rows] = await db.execute('SELECT * FROM Settings WHERE id = 1');
-    return rows[0];
+    let settings = await Settings.findOne();
+    if (!settings) {
+       settings = await Settings.create({});
+    }
+    return settings;
   },
-
   update: async (data) => {
-    const { hospital_name, address, timezone, date_format, time_format, language } = data;
-    await db.execute(
-      `UPDATE Settings SET 
-        hospital_name = ?, 
-        address = ?, 
-        timezone = ?, 
-        date_format = ?, 
-        time_format = ?, 
-        language = ? 
-      WHERE id = 1`,
-      [hospital_name, address, timezone, date_format, time_format, language]
-    );
+    let settings = await Settings.findOne();
+    if (settings) {
+      await Settings.findByIdAndUpdate(settings._id, data);
+    } else {
+      await Settings.create(data);
+    }
   }
 };
 

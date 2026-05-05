@@ -1,30 +1,32 @@
-const db = require('../config/db');
+const mongoose = require('mongoose');
+
+const alertCodeSchema = new mongoose.Schema({
+  name: String,
+  code: String,
+  color: String,
+  description: String,
+  status: { type: String, default: 'Active' }
+});
+
+alertCodeSchema.virtual('id').get(function(){ return this._id.toHexString(); });
+alertCodeSchema.set('toJSON', { virtuals: true });
+
+const AlertCode = mongoose.model('AlertCode', alertCodeSchema);
 
 const AlertCodeModel = {
   getAll: async () => {
-    const [rows] = await db.execute('SELECT * FROM AlertCodes');
-    return rows;
+    return await AlertCode.find();
   },
-
   create: async (data) => {
-    const { name, code, color, description, status } = data;
-    const [result] = await db.execute(
-      'INSERT INTO AlertCodes (name, code, color, description, status) VALUES (?, ?, ?, ?, ?)',
-      [name, code, color, description, status || 'Active']
-    );
-    return result.insertId;
+    const newCode = new AlertCode(data);
+    const savedCode = await newCode.save();
+    return savedCode._id;
   },
-
   update: async (id, data) => {
-    const { name, code, color, description, status } = data;
-    await db.execute(
-      'UPDATE AlertCodes SET name = ?, code = ?, color = ?, description = ?, status = ? WHERE id = ?',
-      [name, code, color, description, status, id]
-    );
+    await AlertCode.findByIdAndUpdate(id, data);
   },
-
   delete: async (id) => {
-    await db.execute('DELETE FROM AlertCodes WHERE id = ?', [id]);
+    await AlertCode.findByIdAndDelete(id);
   }
 };
 

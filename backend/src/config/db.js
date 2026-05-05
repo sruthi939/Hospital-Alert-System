@@ -1,25 +1,14 @@
-const mysql = require('mysql2/promise');
+const mongoose = require('mongoose');
 require('dotenv').config();
 
-const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'hospital_alert_db',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-});
+const connectDB = async () => {
+  try {
+    const conn = await mongoose.connect(process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/hospital_alert_db');
+    console.log(`✅ Connected to MongoDB Database: ${conn.connection.host}`);
+  } catch (error) {
+    console.error(`❌ Database Connection Failed: ${error.message}`);
+    process.exit(1);
+  }
+};
 
-// Test connection on startup
-pool.getConnection()
-  .then(conn => {
-    console.log('✅ Connected to MySQL Database');
-    conn.release();
-  })
-  .catch(err => {
-    console.error('❌ Database Connection Failed:', err.message);
-    console.log('Please ensure MySQL is running and the database "hospital_alert_db" exists.');
-  });
-
-module.exports = pool;
+module.exports = connectDB;
